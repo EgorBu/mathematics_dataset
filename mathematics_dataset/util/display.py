@@ -32,7 +32,9 @@ import decimal
 
 # Dependency imports
 import sympy
+from num2words import num2words
 
+_LANG = 'ru'
 
 # For converting integers to words:
 _INTEGER_LOW = [
@@ -76,6 +78,48 @@ _INTEGER_HIGH = [
     (int(1e3), "thousand"),
     (100, "hundred"),
 ]
+
+# _INTEGER_LOW = [
+#     "zero",
+#     "one",
+#     "two",
+#     "three",
+#     "four",
+#     "five",
+#     "six",
+#     "seven",
+#     "eight",
+#     "nine",
+#     "ten",
+#     "eleven",
+#     "twelve",
+#     "thirteen",
+#     "fourteeen",
+#     "fifteen",
+#     "sixteen",
+#     "seventeen",
+#     "eighteen",
+#     "nineteen",
+# ]
+# _INTEGER_MID = [
+#     "",
+#     "",
+#     "twenty",
+#     "thirty",
+#     "fourty",
+#     "fifty",
+#     "sixty",
+#     "seventy",
+#     "eighty",
+#     "ninety",
+# ]
+# _INTEGER_HIGH = [
+#     (int(1e12), "trillion"),
+#     (int(1e9), "billion"),
+#     (int(1e6), "million"),
+#     (int(1e3), "thousand"),
+#     (100, "hundred"),
+# ]
 
 
 # For converting rationals to words:
@@ -128,6 +172,54 @@ _PLURAL_DENOMINATORS = [
 
 
 # For converting ordinals to words:
+_ORD_ROOTS = [
+    'нулев',
+    'перв',
+    'втор',
+    'трет',
+    'четверт',
+    'пят',
+    'шест',
+    'седьм',
+    'восьм',
+    'девят',
+    'десят',
+    'одиннадцат',
+    'двенадцат',
+]
+
+
+def _get_ord_cases(x, is_male=False, case='nom'):
+    root = _ORD_ROOTS[x]
+    end = '![Warning]'
+    if is_male:
+        if case == 'nom':
+            if x == 3:
+                end = 'ий'
+            elif x in (0, 2, 6, 7, 8):
+                end = 'ой'
+            else:
+                end = 'ый'
+        if case == 'dat':
+            if x == 3:
+                end = 'ьему'
+            else:
+                end = 'ому'
+    else:
+        if case == 'nom':
+            if x == 3:
+                end = 'ья'
+            else:
+                end = 'ая'
+        elif case == 'dat':
+            if x == 3:
+                end = 'ьей'
+            else:
+                end = 'ой'
+
+    return root + end
+
+
 _ORDINALS = [
     "zeroth",
     "first",
@@ -382,6 +474,7 @@ class StringNumber(object):
     def _to_string(self, number):
         """Converts an integer or rational to words."""
         if isinstance(number, sympy.Integer) or isinstance(number, int):
+            return num2words(number, lang=_LANG)
             words = self._integer_to_words(number)
             join_char = "-" if self._join_number_words_with_hyphens else " "
             return join_char.join(words)
@@ -413,7 +506,12 @@ class StringOrdinal(object):
         """
         if position < 0 or position >= len(_ORDINALS):
             raise ValueError("Unsupported ordinal {}.".format(position))
-        self._string = _ORDINALS[position]
+        # self._string = _ORDINALS[position]
+        self.pos = position
+        self._string = _get_ord_cases(position, True, 'nom')
+
+    def str_by_form(self, is_male, case):
+        return _get_ord_cases(self.pos, is_male, case)
 
     def __str__(self):
         return self._string

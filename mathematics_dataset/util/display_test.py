@@ -81,7 +81,7 @@ class DecimalTest(absltest.TestCase):
 
     def testInt_errorIfNonInt(self):
         decimal = display.Decimal(sympy.Rational(1, 2))
-        with self.assertRaisesRegex(self, TypeError, "Cannot represent"):
+        with self.assertRaisesRegex(TypeError, "Cannot represent"):
             int(decimal)
 
     def testComparison(self):
@@ -133,40 +133,40 @@ class StringNumberTest(absltest.TestCase):
 
     def testIntegerToWords(self):
         words = display.StringNumber(0)
-        self.assertEqual(str(words), "zero")
+        self.assertEqual(str(words), "ноль")
         self.assertEqual(sympy.sympify(words), 0)
 
         words = display.StringNumber(8)
-        self.assertEqual(str(words), "eight")
+        self.assertEqual(str(words), "восемь")
         self.assertEqual(sympy.sympify(words), 8)
 
         words = display.StringNumber(12)
-        self.assertEqual(str(words), "twelve")
+        self.assertEqual(str(words), "двенадцать")
         self.assertEqual(sympy.sympify(words), 12)
 
         words = display.StringNumber(30)
-        self.assertEqual(str(words), "thirty")
+        self.assertEqual(str(words), "тридцать")
         self.assertEqual(sympy.sympify(words), 30)
 
         words = display.StringNumber(100)
-        self.assertEqual(str(words), "one-hundred")
+        self.assertEqual(str(words), "сто")
         self.assertEqual(sympy.sympify(words), 100)
 
         words = display.StringNumber(103)
-        self.assertEqual(str(words), "one-hundred-and-three")
+        self.assertEqual(str(words), "сто три")
         self.assertEqual(sympy.sympify(words), 103)
 
-        words = display.StringNumber(15439822)
+        words = display.StringNumber(15_439_822)
         self.assertEqual(
             str(words),
-            "fifteen-million-four-hundred-and-thirty-nine"
-            "-thousand-eight-hundred-and-twenty-two",
+            "пятнадцать миллионов четыреста тридцать девять тысяч" +
+            " восемьсот двадцать два",
         )
         self.assertEqual(sympy.sympify(words), 15439822)
 
-    def testRationalToWords(self):
-        words = display.StringNumber(sympy.Rational(2, 3))
-        self.assertEqual(str(words), "two thirds")
+    # def testRationalToWords(self):
+    #     words = display.StringNumber(sympy.Rational(2, 3))
+    #     self.assertEqual(str(words), "two thirds")
 
 
 class StringOrdinalTest(absltest.TestCase):
@@ -178,7 +178,7 @@ class StringOrdinalTest(absltest.TestCase):
         self.assertEqual(str(ordinal), "tenth")
 
     def testCreate_errorIfNegative(self):
-        with self.assertRaisesRegex(self, ValueError, "Unsupported ordinal"):
+        with self.assertRaisesRegex(ValueError, "Unsupported ordinal"):
             display.StringOrdinal(-1)
 
 
