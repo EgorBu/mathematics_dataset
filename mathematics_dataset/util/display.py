@@ -79,48 +79,6 @@ _INTEGER_HIGH = [
     (100, "hundred"),
 ]
 
-# _INTEGER_LOW = [
-#     "zero",
-#     "one",
-#     "two",
-#     "three",
-#     "four",
-#     "five",
-#     "six",
-#     "seven",
-#     "eight",
-#     "nine",
-#     "ten",
-#     "eleven",
-#     "twelve",
-#     "thirteen",
-#     "fourteeen",
-#     "fifteen",
-#     "sixteen",
-#     "seventeen",
-#     "eighteen",
-#     "nineteen",
-# ]
-# _INTEGER_MID = [
-#     "",
-#     "",
-#     "twenty",
-#     "thirty",
-#     "fourty",
-#     "fifty",
-#     "sixty",
-#     "seventy",
-#     "eighty",
-#     "ninety",
-# ]
-# _INTEGER_HIGH = [
-#     (int(1e12), "trillion"),
-#     (int(1e9), "billion"),
-#     (int(1e6), "million"),
-#     (int(1e3), "thousand"),
-#     (100, "hundred"),
-# ]
-
 
 # For converting rationals to words:
 _SINGULAR_DENOMINATORS = [
@@ -186,39 +144,100 @@ _ORD_ROOTS = [
     'десят',
     'одиннадцат',
     'двенадцат',
+    'тринадцат',
+    'четырнадцат',
+    'пятнадцат',
+    'шестнадцат',
+    'семнадцат',
+    'восемнадцат',
+    'девятнадцат',
 ]
 
 
-def _get_ord_cases(x, is_male=False, case='nom'):
+_ord_cases_3 = {
+    True: {
+        'male': {
+            'nomn': 'ий',
+            'datv': 'ьему',
+        },
+        'femn': {
+            'nomn': 'ья',
+            'datv': 'ьей',
+            'gent': 'ьей'
+        },
+        'mid': {
+            'nomn': 'ье',
+            'datv': 'ьему',
+        }
+    },
+    False: {
+        'nomn': 'ьи',
+        'gent': 'ьих',
+        "datv": "ьим",
+        "accs": "ьи",
+        "ablt": "ьими",
+        "loct": "ьих"
+    }
+}
+
+
+def _get_ord_cases(x, gen='male', case='nomn', is_sing=True):
     root = _ORD_ROOTS[x]
     end = '![Warning]'
-    if is_male:
-        if case == 'nom':
-            if x == 3:
-                end = 'ий'
-            elif x in (0, 2, 6, 7, 8):
+    if x == 3:
+        if is_sing:
+            end = _ord_cases_3[is_sing][gen][case]
+        else:
+            end = _ord_cases_3[is_sing][case]
+    elif is_sing:
+        if gen == 'male':
+            if case == 'nomn':
+                if x in (0, 2, 6, 7, 8):
+                    end = 'ой'
+                else:
+                    end = 'ый'
+            if case == 'datv':
+                end = 'ому'
+        elif gen == 'femn':
+            if case == 'nomn':
+                end = 'ая'
+            elif case in ['datv', 'gent']:
                 end = 'ой'
-            else:
-                end = 'ый'
-        if case == 'dat':
-            if x == 3:
-                end = 'ьему'
-            else:
+        else:
+            if case == 'nomn':
+                end = 'ое'
+            elif case == 'datv':
                 end = 'ому'
     else:
-        if case == 'nom':
-            if x == 3:
-                end = 'ья'
-            else:
-                end = 'ая'
-        elif case == 'dat':
-            if x == 3:
-                end = 'ьей'
-            else:
-                end = 'ой'
+        if case in ['nomn', 'accs']:
+            end = 'ые'
+        elif case in ['gent', 'loct']:
+            end = 'ых'
+        elif case == 'datv':
+            end = 'ым'
+        else:
+            end = 'ыми'
 
     return root + end
 
+
+def _get_numer(x):
+    l = x % 100
+    n = x - l
+    words = [num2words(n, lang='ru')] if n > 0 else []
+    l0 = l%10
+    if not 10 < l < 20 and l0 in [1, 2]:
+        l1 = l - l0
+        if l1 > 0:
+            words.append(num2words(l1, lang='ru'))
+        if l0 == 1:
+            words.append('одна')
+        else:
+            words.append('две')
+    else:
+        words.append(num2words(l, lang='ru'))
+
+    return ' '.join(words)
 
 _ORDINALS = [
     "zeroth",
@@ -456,7 +475,8 @@ class StringNumber(object):
         numer = sympy.numer(rational)
         denom = sympy.denom(rational)
 
-        numer_words = self._to_string(numer)
+        # numer_words = self._to_string(numer)
+        numer_words = _get_numer(numer)
 
         if denom == 1:
             return numer_words
@@ -464,10 +484,10 @@ class StringNumber(object):
         if denom <= 0 or denom >= len(_PLURAL_DENOMINATORS):
             raise ValueError("Unsupported denominator {}.".format(denom))
 
-        if numer == 1:
-            denom_word = _SINGULAR_DENOMINATORS[denom]
+        if numer % 10 == 1:
+            denom_word = StringOrdinal(denom).str_by_form('femn', 'nomn')
         else:
-            denom_word = _PLURAL_DENOMINATORS[denom]
+            denom_word = StringOrdinal(denom).str_by_form('femn', 'gent', False)
 
         return "{} {}".format(numer_words, denom_word)
 
@@ -504,14 +524,23 @@ class StringOrdinal(object):
         Raises:
           ValueError: If `position` is non-positive or out of range.
         """
-        if position < 0 or position >= len(_ORDINALS):
+        if position < 0 or position >= 1000:
             raise ValueError("Unsupported ordinal {}.".format(position))
         # self._string = _ORDINALS[position]
         self.pos = position
-        self._string = _get_ord_cases(position, True, 'nom')
+        self._string = self.str_by_form('male', 'nomn')
 
-    def str_by_form(self, is_male, case):
-        return _get_ord_cases(self.pos, is_male, case)
+    def str_by_form(self, gen='male', case='nomn', is_sing=True):
+        l = self.pos % 100
+        n = self.pos - l
+        words = [num2words(n, lang='ru')] if n > 0 else []
+        if l >= 20:
+            nl = l % 10
+            words.append(num2words(l - nl, lang='ru'))
+            l = nl
+        words.append(_get_ord_cases(l, gen, case, is_sing))
+        return ' '.join(words)
+        # return _get_ord_cases(self.pos, gen, case, is_sing)
 
     def __str__(self):
         return self._string

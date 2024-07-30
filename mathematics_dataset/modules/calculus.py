@@ -197,7 +197,7 @@ def _differentiate_polynomial(value, sample_args, context, num_variables):
             handle=composition.FunctionHandle(fn_symbol),
             fn=fn_symbol,
             variables=variables_string,
-            nth=nth.str_by_form(False, 'dat'),
+            nth=nth.str_by_form('femn', 'datv'),
             eq=polynomial,
         )
 

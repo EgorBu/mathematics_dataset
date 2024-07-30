@@ -159,23 +159,62 @@ class StringNumberTest(absltest.TestCase):
         words = display.StringNumber(15_439_822)
         self.assertEqual(
             str(words),
-            "пятнадцать миллионов четыреста тридцать девять тысяч" +
-            " восемьсот двадцать два",
+            "пятнадцать миллионов четыреста тридцать девять тысяч " +
+            "восемьсот двадцать два",
         )
         self.assertEqual(sympy.sympify(words), 15439822)
 
-    # def testRationalToWords(self):
-    #     words = display.StringNumber(sympy.Rational(2, 3))
-    #     self.assertEqual(str(words), "two thirds")
+    def testRationalToWords(self):
+        # Not maintained by display.StringNumber from the beginning
+        # words = display.StringNumber(sympy.Rational(145, 141))
+        # self.assertEqual(str(words), "сорок одна двенадцатая")
+        words = display.StringNumber(sympy.Rational(41, 12))
+        self.assertEqual(str(words), "сорок одна двенадцатая")
+        words = display.StringNumber(sympy.Rational(15, 8))
+        self.assertEqual(str(words), "пятнадцать восьмых")
+        words = display.StringNumber(sympy.Rational(2, 3))
+        self.assertEqual(str(words), "две третьих")
+        words = display.StringNumber(sympy.Rational(1, 5))
+        self.assertEqual(str(words), "одна пятая")
 
 
 class StringOrdinalTest(absltest.TestCase):
 
     def testBasic(self):
         ordinal = display.StringOrdinal(0)
-        self.assertEqual(str(ordinal), "zeroth")
+        self.assertEqual(str(ordinal), "нулевой")
         ordinal = display.StringOrdinal(10)
-        self.assertEqual(str(ordinal), "tenth")
+        self.assertEqual(str(ordinal), "десятый")
+        ordinal = display.StringOrdinal(12)
+        self.assertEqual(
+            ordinal.str_by_form('male', 'nomn', False),
+            "двенадцатые"
+        )
+        ordinal = display.StringOrdinal(11)
+        self.assertEqual(
+            ordinal.str_by_form('male', 'gent', False),
+            "одиннадцатых"
+        )
+        ordinal = display.StringOrdinal(18)
+        self.assertEqual(
+            ordinal.str_by_form('femn', 'gent', True),
+            "восемнадцатой"
+        )
+        ordinal = display.StringOrdinal(122)
+        self.assertEqual(
+            ordinal.str_by_form('femn', 'gent', False),
+            "сто двадцать вторых"
+        )
+        ordinal = display.StringOrdinal(21)
+        self.assertEqual(
+            ordinal.str_by_form('femn', 'nomn', False),
+            "двадцать первые"
+        )
+        # TODO: кратные 10 числитильные
+        # ordinal = display.StringOrdinal(20)
+        # self.assertEqual(
+        #     ordinal.str_by_form(False, 'nomn', False),
+        #     "двадцатый"
 
     def testCreate_errorIfNegative(self):
         with self.assertRaisesRegex(ValueError, "Unsupported ordinal"):
