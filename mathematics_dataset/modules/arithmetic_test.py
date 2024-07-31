@@ -49,7 +49,7 @@ class ArithmeticTest(absltest.TestCase):
         self.assertEqual(arithmetic._surd_coefficients(exp), (1 / 2, 3 / 2))
 
         exp = sympy.sympify("sqrt(2)/(-1 + 2*sqrt(2))**2")
-        self.assertEqual(arithmetic._surd_coefficients(exp), (8 / 49, 9 / 49))
+        self.assertEqual(arithmetic._surd_coefficients(exp), (sympy.Rational(8, 49), sympy.Rational(9, 49)))
 
 
 if __name__ == "__main__":
