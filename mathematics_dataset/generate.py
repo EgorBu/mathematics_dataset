@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
+import json
 import textwrap
 
 # Dependency imports
@@ -37,6 +38,7 @@ flags.DEFINE_string("filter", "", "restrict to matching module names")
 flags.DEFINE_integer("per_train_module", 10, "Num of examples per train module")
 flags.DEFINE_integer("per_test_module", 10, "Num of examples per test module")
 flags.DEFINE_bool("show_dropped", False, "Whether to print dropped questions")
+flags.DEFINE_string("jsonl", None, "Path to save JSONL file where each line will be a sample")
 
 
 filtered_modules = collections.OrderedDict([])
@@ -156,21 +158,36 @@ def main(unused_argv):
         width=80, initial_indent=" ", subsequent_indent="  "
     )
 
-    for regime, flat_modules in six.iteritems(filtered_modules):
-        per_module = counts[regime]
-        for module_name, module in six.iteritems(flat_modules):
-            # These magic print constants make the header bold.
-            print("\033[1m{}/{}\033[0m".format(regime, module_name))
-            num_dropped = 0
-            for _ in range(per_module):
-                problem, extra_dropped = sample_from_module(module)
-                num_dropped += extra_dropped
-                text = text_wrapper.fill(
-                    "{}  \033[92m{}\033[0m".format(problem.question, problem.answer)
-                )
-                print(text)
-            if num_dropped > 0:
-                logging.warning("Dropped %d examples", num_dropped)
+    jsonl_path = FLAGS.jsonl
+    jsonl_file = open(jsonl_path, 'w', encoding='utf-8') if jsonl_path else None
+
+    try:
+        for regime, flat_modules in six.iteritems(filtered_modules):
+            per_module = counts[regime]
+            for module_name, module in six.iteritems(flat_modules):
+                # These magic print constants make the header bold.
+                print("\033[1m{}/{}\033[0m".format(regime, module_name))
+                num_dropped = 0
+                for _ in range(per_module):
+                    problem, extra_dropped = sample_from_module(module)
+                    num_dropped += extra_dropped
+                    text = text_wrapper.fill(
+                        "{}  \033[92m{}\033[0m".format(problem.question, problem.answer)
+                    )
+                    print(text)
+                    if jsonl_file:
+                        json_line = {
+                            "regime": regime,
+                            "module_name": module_name,
+                            "question": str(problem.question),
+                            "answer": str(problem.answer)
+                        }
+                        jsonl_file.write(json.dumps(json_line, ensure_ascii=False) + '\n')
+                if num_dropped > 0:
+                    logging.warning("Dropped %d examples", num_dropped)
+    finally:
+        if jsonl_file:
+            jsonl_file.close()
 
 
 if __name__ == "__main__":
