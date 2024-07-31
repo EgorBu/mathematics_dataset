@@ -481,8 +481,8 @@ class StringNumber(object):
         if denom == 1:
             return numer_words
 
-        if denom <= 0 or denom >= len(_PLURAL_DENOMINATORS):
-            raise ValueError("Unsupported denominator {}.".format(denom))
+        # if denom <= 0 or denom >= len(_PLURAL_DENOMINATORS):
+        #     raise ValueError("Unsupported denominator {}.".format(denom))
 
         if numer % 10 == 1:
             denom_word = StringOrdinal(denom).str_by_form('femn', 'nomn')

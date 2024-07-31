@@ -166,8 +166,8 @@ class StringNumberTest(absltest.TestCase):
 
     def testRationalToWords(self):
         # Not maintained by display.StringNumber from the beginning
-        # words = display.StringNumber(sympy.Rational(145, 141))
-        # self.assertEqual(str(words), "сорок одна двенадцатая")
+        words = display.StringNumber(sympy.Rational(145, 141))
+        self.assertEqual(str(words), "сто сорок пять сто сорок первых")
         words = display.StringNumber(sympy.Rational(41, 12))
         self.assertEqual(str(words), "сорок одна двенадцатая")
         words = display.StringNumber(sympy.Rational(15, 8))
