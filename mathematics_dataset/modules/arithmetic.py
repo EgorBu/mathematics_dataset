@@ -142,15 +142,15 @@ def _add_question_or_entity(context, p, q, is_question):
             [
                 "{p} + {q}",
                 "{p}+{q}",
-                "Work out {p} + {q}.",
-                "Add {p} and {q}.",
-                "Put together {p} and {q}.",
-                "Sum {p} and {q}.",
-                "Total of {p} and {q}.",
-                "Add together {p} and {q}.",
-                "What is {p} plus {q}?",
-                "Calculate {p} + {q}.",
-                "What is {p} + {q}?",
+                "Вычислите {p} + {q}.",
+                "Сложите {p} и {q}.",
+                "Суммируйте {p} и {q}.",
+                "Найдите сумму {p} и {q}.",
+                "Общая сумма {p} и {q}.",
+                "Сложите вместе {p} и {q}.",
+                "Чему равно {p} плюс {q}?",
+                "Рассчитайте {p} + {q}.",
+                "Каков результат {p} + {q}?",
             ]
         )
         return example.Problem(
@@ -160,7 +160,7 @@ def _add_question_or_entity(context, p, q, is_question):
         return composition.Entity(
             context=context,
             value=value,
-            description="Let {self} = {p} + {q}.",
+            description="Пусть {self} = {p} + {q}.",
             p=p,
             q=q,
         )
@@ -173,20 +173,20 @@ def _sub_question_or_entity(context, p, q, is_question):
     if is_question:
         templates = [
             "{p} - {q}",
-            "Work out {p} - {q}.",
-            "What is {p} minus {q}?",
-            "What is {p} take away {q}?",
-            "What is {q} less than {p}?",
-            "Subtract {q} from {p}.",
-            "Calculate {p} - {q}.",
-            "What is {p} - {q}?",
+            "Вычислите {p} - {q}.",
+            "Чему равно {p} минус {q}?",
+            "Чему равно {p} без {q}?",
+            "На сколько {q} меньше {p}?",
+            "Вычтите {q} из {p}.",
+            "Рассчитайте {p} - {q}.",
+            "Каков результат {p} - {q}?",
         ]
         if sympy.Ge(p.value, q.value):
             # We calculate p - q, so the difference (|p - q|) is the correct answer.
-            for adjective in ["distance", "difference"]:
-                for pair in ["{p} and {q}", "{q} and {p}"]:
+            for adjective in ["расстояние", "разница"]:
+                for pair in ["между {p} и {q}", "между {q} и {p}"]:
                     templates.append(
-                        "What is the {} between {}?".format(adjective, pair)
+                        "Чему равняется {} {}?".format(adjective, pair)
                     )
         template = random.choice(templates)
         return example.Problem(
@@ -196,7 +196,7 @@ def _sub_question_or_entity(context, p, q, is_question):
         return composition.Entity(
             context=context,
             value=value,
-            description="Let {self} = {p} - {q}.",
+            description="Пусть {self} = {p} - {q}.",
             p=p,
             q=q,
         )
@@ -255,10 +255,10 @@ def add_or_sub_in_base(sample_args):
     base = random.randint(2, 16)
     if random.choice([False, True]):
         answer = p + q
-        template = "In base {base}, what is {p} + {q}?"
+        template = "В системе счисления с основанием {base}, сколько будет {p} + {q}?"
     else:
         answer = p - q
-        template = "In base {base}, what is {p} - {q}?"
+        template = "В системе счисления с основанием {base}, сколько будет {p} - {q}?"
     return example.Problem(
         question=example.question(
             context,
@@ -287,14 +287,14 @@ def mul(value, sample_args, context=None):
     if is_question:
         templates = [
             "{p}" + ops.MUL_SYMBOL + "{q}",
-            "{p} " + ops.MUL_SYMBOL + " {q}",
-            "Calculate {p}" + ops.MUL_SYMBOL + "{q}.",
-            "Work out {p} " + ops.MUL_SYMBOL + " {q}.",
-            "Multiply {p} and {q}.",
-            "Product of {p} and {q}.",
-            "What is the product of {p} and {q}?",
-            "{p} times {q}",
-            "What is {p} times {q}?",
+            "{q}" + ops.MUL_SYMBOL + "{p}",
+            "Вычислите {p}" + ops.MUL_SYMBOL + "{q}.",
+            "Решите {p}" + ops.MUL_SYMBOL + "{q}.",
+            "Умножьте {p} на {q}.",
+            "Произведение {p} и {q}.",
+            "Чему равно произведение {p} и {q}?",
+            "{p} умножить на {q}",
+            "Каков результат умножения {p} на {q}?",
         ]
         template = random.choice(templates)
         return example.Problem(
@@ -304,7 +304,7 @@ def mul(value, sample_args, context=None):
         return composition.Entity(
             context=context,
             value=answer,
-            description="Let {self} = {p} * {q}.",
+            description="Пусть {self} = {p} × {q}.",
             p=p,
             q=q,
         )
@@ -335,10 +335,11 @@ def div(value, sample_args, context=None):
     if is_question:
         template = random.choice(
             [
-                "Divide {p} by {q}.",
-                "{p} divided by {q}",
-                "What is {p} divided by {q}?",
-                "Calculate {p} divided by {q}.",
+                "Разделите {p} на {q}.",
+                "{p} разделить на {q}",
+                "Чему равно {p} разделенное на {q}?",
+                "Вычислите {p} разделенное на {q}.",
+                "Какой результат деления {p} на {q}?",
             ]
         )
         return example.Problem(
@@ -348,7 +349,7 @@ def div(value, sample_args, context=None):
         return composition.Entity(
             context=context,
             value=answer,
-            description="Let {self} be {p} divided by {q}.",
+            description="Пусть {self} будет равно {p} разделенному на {q}.",
             p=p,
             q=q,
         )
@@ -370,23 +371,22 @@ def nearest_integer_root(sample_args):
     answer = int(round(value ** (1 / one_over_exponent)))
 
     templates = [
-        "What is {value} to the power of 1/{one_over_exponent}, to the nearest"
-        " integer?",
+         "Чему равно число {value} в степени 1/{one_over_exponent}, округленное до ближайшего целого числа?",
     ]
 
     if one_over_exponent != 2:  # "What is the second root of 4?" never used.
         ordinal = str()
         templates += [
-            "What is the {ordinal} root of {value} to the nearest integer?",
+            "Чему равен корень {ordinal} степени из {value}, округленный до ближайшего целого?",
         ]
 
     if one_over_exponent == 2:
         templates += [
-            "What is the square root of {value} to the nearest integer?",
+            "Чему равен квадратный корень из {value}, округленный до ближайшего целого?",
         ]
     elif one_over_exponent == 3:
         templates += [
-            "What is the cube root of {value} to the nearest integer?",
+            "Чему равен кубический корень из {value}, округленный до ближайшего целого?",
         ]
 
     template = random.choice(templates)
@@ -427,10 +427,10 @@ def _calculate(value, sample_args, context, add_sub, mul_div, length=None):
         template = random.choice(
             [
                 "{op}",
-                "What is {op}?",
-                "Evaluate {op}.",
-                "Calculate {op}.",
-                "What is the value of {op}?",
+                "Чему равно {op}?",
+                "Вычислите {op}.",
+                "Рассчитайте {op}.",
+                "Каково значение выражения {op}?",
             ]
         )
         return example.Problem(
@@ -441,7 +441,7 @@ def _calculate(value, sample_args, context, add_sub, mul_div, length=None):
             context=context,
             value=value,
             expression=op,
-            description="Let {self} be {op}.",
+            description="Пусть {self} будет равно {op}.",
             op=op,
         )
 
@@ -617,7 +617,7 @@ def simplify_surd(value, sample_args, context=None):
 
     template = random.choice(
         [
-            "Simplify {exp}.",
+            "Упростите {exp}.",
         ]
     )
     return example.Problem(
