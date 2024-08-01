@@ -140,21 +140,17 @@ def _add_question_or_entity(context, p, q, is_question):
     if is_question:
         template = random.choice(
             [
-                "{p} + {q}",
-                "{p}+{q}",
-                "Вычислите {p} + {q}.",
-                "Сложите {p} и {q}.",
-                "Суммируйте {p} и {q}.",
-                "Найдите сумму {p} и {q}.",
-                "Общая сумма {p} и {q}.",
-                "Сложите вместе {p} и {q}.",
-                "Чему равно {p} плюс {q}?",
-                "Рассчитайте {p} + {q}.",
-                "Каков результат {p} + {q}?",
+                "{exp}",
+                "Вычислите {exp}.",
+                "Рассчитайте {exp}.",
+                "Чему равняется {exp}?",
+                "Найдите {exp}.",
+                "Каков результат {exp}?",
+                "Чему равно {exp}?",
             ]
         )
         return example.Problem(
-            question=example.question(context, template, p=p, q=q), answer=value
+            question=example.question(context, template, exp=sympy.Add(p.value, q.value, evaluate=False)), answer=value
         )
     else:
         return composition.Entity(
@@ -172,18 +168,17 @@ def _sub_question_or_entity(context, p, q, is_question):
 
     if is_question:
         templates = [
-            "{p} - {q}",
-            "Вычислите {p} - {q}.",
+            "{p} минус {q}",
+            "Вычислите {p} минус {q}.",
             "Чему равно {p} минус {q}?",
             "Чему равно {p} без {q}?",
             "На сколько {q} меньше {p}?",
             "Вычтите {q} из {p}.",
-            "Рассчитайте {p} - {q}.",
-            "Каков результат {p} - {q}?",
+            "Каков результат вычитания {q} из {p}?",
         ]
         if sympy.Ge(p.value, q.value):
             # We calculate p - q, so the difference (|p - q|) is the correct answer.
-            for adjective in ["расстояние", "разница"]:
+            for adjective in ["разница"]:
                 for pair in ["между {p} и {q}", "между {q} и {p}"]:
                     templates.append(
                         "Чему равняется {} {}?".format(adjective, pair)
@@ -255,10 +250,10 @@ def add_or_sub_in_base(sample_args):
     base = random.randint(2, 16)
     if random.choice([False, True]):
         answer = p + q
-        template = "В системе счисления с основанием {base}, сколько будет {p} + {q}?"
+        template = "В системе счисления с основанием {base}, сколько будет {p} плюс {q}?"
     else:
         answer = p - q
-        template = "В системе счисления с основанием {base}, сколько будет {p} - {q}?"
+        template = "В системе счисления с основанием {base}, сколько будет {p} минус {q}?"
     return example.Problem(
         question=example.question(
             context,
@@ -433,6 +428,8 @@ def _calculate(value, sample_args, context, add_sub, mul_div, length=None):
                 "Каково значение выражения {op}?",
             ]
         )
+        print(op)
+        print(type(op))
         return example.Problem(
             question=example.question(context, template, op=op), answer=value
         )
