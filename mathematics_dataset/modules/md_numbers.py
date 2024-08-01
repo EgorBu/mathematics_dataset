@@ -210,8 +210,7 @@ def round_number(value, sample_args, context=None):
                 "{dps} знаков после запятой",
                 "{dps} десятичных знаков"
             ])
-        # if random.choice([False, True]):
-        #     dps = display.StringNumber(dps)
+
         description = description.format(dps=dps)
 
     template = random.choice(
@@ -273,7 +272,6 @@ def is_prime(value, sample_args, context=None):
 
     if random.choice([False, True]) and integer != 1:
         answer = not is_prime_
-        # attribute_name = random.choice(["составное", "составное число"])
         template = random.choice([
             "{integer} - составное?",
             "{integer} - составное число?",
@@ -282,7 +280,6 @@ def is_prime(value, sample_args, context=None):
         ])
     else:
         answer = is_prime_
-        # attribute_name = random.choice(["простое", "простое число"])
         template = random.choice([
             "{integer} - простое?",
             "{integer} - простое число?",
@@ -295,7 +292,6 @@ def is_prime(value, sample_args, context=None):
             context,
             template,
             integer=integer_entity.expression_else_handle,
-            # attribute=attribute_name,
         ),
         answer=answer,
     )
@@ -400,8 +396,6 @@ def lcm(value, sample_args, context=None):
 
     if random.choice([False, True]):
         p, q = context.sample(sample_args, [p, q])
-        # Ask the question directly.
-        # adjective = random.choice(["least", "lowest", "smallest"])
         adjective = "наименьшее"
         template = random.choice(
             [
@@ -489,11 +483,6 @@ def gcd(value, sample_args, context=None):
 
     p, q = context.sample(sample_args, [p, q])
 
-    # adjective = (
-    #     random.choice(["greatest", "highest"])
-    #     + " common "
-    #     + random.choice(["divisor", "factor"])
-    # )
     adjective = 'наибольший общий делитель'
 
     if is_question:

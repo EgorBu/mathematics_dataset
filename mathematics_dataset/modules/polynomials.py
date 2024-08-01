@@ -321,8 +321,6 @@ def collect(value, sample_args, context=None):
     context.sample_by_replacing_constants(sample_args, unsimplified)
 
     if is_question:
-        # template = "Collect the terms in {unsimplified}."
-
         act = random.choice(["Сократи", "Упрости", "Приведи к стандартному виду"])
         ent = random.choice(["полином", "многочлен"])
 

@@ -355,8 +355,6 @@ def kth_biggest(sample_args, count=None):
         answer = sorted_entities[ordinal - 1]
         adjective = "наименьшее"
 
-    # if ordinal > 1:
-    #     adjective = str(display.StringOrdinal(ordinal)) + " " + adjective
     adjective = " ".join([
         display.StringOrdinal(ordinal).str_by_form(
             gen='mid',

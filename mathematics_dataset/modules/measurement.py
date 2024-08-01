@@ -22,6 +22,8 @@ import collections
 import functools
 import random
 
+from typing import Union
+
 # Dependency imports
 from mathematics_dataset import example
 from mathematics_dataset.modules import train_test_split
@@ -32,6 +34,8 @@ from mathematics_dataset.util.unit_cases import UNIT_CASES
 from mathematics_dataset.util.display import Decimal
 import six
 import sympy
+
+from sympy import Rational
 
 
 def _make_modules(is_train):
@@ -122,11 +126,13 @@ DIMENSIONS = [
 ]
 
 
-def set_form(root, number, case):
+def set_form(root: str, number: str, case: str):
     return UNIT_CASES[root][number][case]
 
 
-def base_form(root, value, case):
+def base_form(root: str,
+              value: Union[Decimal, Rational],
+              case: str):
     res = None
     if isinstance(value, Decimal):
         value = value._value
@@ -191,7 +197,7 @@ def _conversion_decimal(context, is_train, is_extrapolation):
         if train_test_split.is_train(base_value) == is_train:
             break
 
-    # print(base_value, base_unit, target_value, target_unit)
+    # templates = tempate x (target_number, target_case) x base_case
     templates = [
         (
             "Сколько {target_name} содержат {base_value} {base_name}?",
@@ -229,9 +235,7 @@ def _conversion_decimal(context, is_train, is_extrapolation):
         ]
     template, form_target, case_base = random.choice(templates)
 
-    # base_name = pluralize(base_unit.name)
     base_name = base_form(base_unit.name, base_value, case_base)
-    # target_name = pluralize(target_unit.name)
     target_name = set_form(target_unit.name, *form_target)
 
     question = example.question(
@@ -283,7 +287,6 @@ def _conversion_fraction(context, is_train):
     else:
         base_value_string = display.StringNumber(base_value)  # e.g., two thirds
 
-    # base_name = set_form(base_unit.name, 'sing', 'gent')
     base_name = base_form(base_unit.name, base_value, 'gent')
     target_name = set_form(target_unit.name, 'plur', case)
 

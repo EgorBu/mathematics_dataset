@@ -166,7 +166,6 @@ def _differentiate_polynomial(value, sample_args, context, num_variables):
     value = coefficients
     for _ in range(derivative_order):
         value = polynomials.differentiate(value, axis=derivative_axis)
-
     nth = display.StringOrdinal(derivative_order)
 
     if entity.has_expression():

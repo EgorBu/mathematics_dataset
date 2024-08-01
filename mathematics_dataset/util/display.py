@@ -154,21 +154,16 @@ _ORD_ROOTS = [
 ]
 
 
+# Numbers with 3 in the end is exception in terms of cases.
+# _ord_cases_3: Dict
+#     - is_singular: Dict[Bool, Dict]
+#         - case: Dict[str, Optional[Dir, str]]
+#             - *gender*: Dict[str, str]
 _ord_cases_3 = {
     True: {
-        'male': {
-            'nomn': 'ий',
-            'datv': 'ьему',
-        },
-        'femn': {
-            'nomn': 'ья',
-            'datv': 'ьей',
-            'gent': 'ьей'
-        },
-        'mid': {
-            'nomn': 'ье',
-            'datv': 'ьему',
-        }
+        'nomn': {'male': 'ий', 'femn': 'ья', 'mid': 'ье'},
+        'gent': {'male': 'ьего', 'femn': 'ьей', 'mid': 'ьего'},
+        "datv": {'male': 'ьему', 'femn': 'ьей', 'mid': 'ьему'}
     },
     False: {
         'nomn': 'ьи',
@@ -181,12 +176,17 @@ _ord_cases_3 = {
 }
 
 
-def _get_ord_cases(x, gen='male', case='nomn', is_sing=True):
+def _get_ord_cases(x: int,
+                   gen: str = 'male',
+                   case: str = 'nomn',
+                   is_sing: bool = True):
+    if x < 0 or x > len(_ORD_ROOTS):
+        raise ValueError("Unsupported ordinal {}.".format(x))
     root = _ORD_ROOTS[x]
     end = '![Warning]'
     if x == 3:
         if is_sing:
-            end = _ord_cases_3[is_sing][gen][case]
+            end = _ord_cases_3[is_sing][case][gen]
         else:
             end = _ord_cases_3[is_sing][case]
     elif is_sing:
@@ -221,11 +221,12 @@ def _get_ord_cases(x, gen='male', case='nomn', is_sing=True):
     return root + end
 
 
-def _get_numer(x):
+def _get_numer(x: int):
+    '''Get numeral string for rational'''
     l = x % 100
     n = x - l
     words = [num2words(n, lang='ru')] if n > 0 else []
-    l0 = l%10
+    l0 = l % 10
     if not 10 < l < 20 and l0 in [1, 2]:
         l1 = l - l0
         if l1 > 0:
@@ -238,30 +239,6 @@ def _get_numer(x):
         words.append(num2words(l, lang='ru'))
 
     return ' '.join(words)
-
-_ORDINALS = [
-    "zeroth",
-    "first",
-    "second",
-    "third",
-    "fourth",
-    "fifth",
-    "sixth",
-    "seventh",
-    "eighth",
-    "ninth",
-    "tenth",
-    "eleventh",
-    "twelth",
-    "thirteenth",
-    "fourteenth",
-    "fifteenth",
-    "sixteenth",
-    "seventeenth",
-    "eighteenth",
-    "nineteenth",
-    "twentieth",
-]
 
 
 class Decimal(object):
@@ -475,15 +452,13 @@ class StringNumber(object):
         numer = sympy.numer(rational)
         denom = sympy.denom(rational)
 
-        # numer_words = self._to_string(numer)
         numer_words = _get_numer(numer)
 
         if denom == 1:
             return numer_words
 
-        # if denom <= 0 or denom >= len(_PLURAL_DENOMINATORS):
-        #     raise ValueError("Unsupported denominator {}.".format(denom))
-
+        # Знаменатель дроби в женском роде.
+        # В случае если числитель > 1 множе ственное число + род. падеж.
         if numer % 10 == 1:
             denom_word = StringOrdinal(denom).str_by_form('femn', 'nomn')
         else:
@@ -495,9 +470,6 @@ class StringNumber(object):
         """Converts an integer or rational to words."""
         if isinstance(number, sympy.Integer) or isinstance(number, int):
             return num2words(number, lang=_LANG)
-            words = self._integer_to_words(number)
-            join_char = "-" if self._join_number_words_with_hyphens else " "
-            return join_char.join(words)
         elif isinstance(number, sympy.Rational):
             return self._rational_to_string(number)
         else:
@@ -526,7 +498,6 @@ class StringOrdinal(object):
         """
         if position < 0 or position >= 1000:
             raise ValueError("Unsupported ordinal {}.".format(position))
-        # self._string = _ORDINALS[position]
         self.pos = position
         self._string = self.str_by_form('male', 'nomn')
 
@@ -540,7 +511,6 @@ class StringOrdinal(object):
             l = nl
         words.append(_get_ord_cases(l, gen, case, is_sing))
         return ' '.join(words)
-        # return _get_ord_cases(self.pos, gen, case, is_sing)
 
     def __str__(self):
         return self._string

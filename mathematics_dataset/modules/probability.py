@@ -35,7 +35,6 @@ from six.moves import range
 from six.moves import zip
 
 
-# _LETTERS = string.ascii_lowercase
 _LETTERS = (
     'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
 )
@@ -134,7 +133,6 @@ def _word_series(words, conjunction="and"):
     if len_words == 1:
         return words[0]
     return ', '.join(words)
-    # return "{} {} {}".format(", ".join(words[:-1]), conjunction, words[-1])
 
 
 def _level_set_event(values, length, verb):
@@ -157,7 +155,6 @@ def _level_set_event(values, length, verb):
             "{verbing} {counts_and_values}",
         ]
     )
-    # verbing = _GERUNDS[verb]
     verbing = "набор"
     event_description = template.format(
         counts_and_values=counts_and_values, verbing=verbing
