@@ -55,22 +55,22 @@ def _make_modules(entropy, add_sub_entropy):
     # TODO(b/124039105): consider composed modules?
     return {
         # Addition and subtraction of integers (and decimals)
-        "add_or_sub": functools.partial(add_or_sub, None, add_sub_sample_args_pure),
-        "add_sub_multiple": functools.partial(add_sub_multiple, _INT, sample_args_pure),
-        "add_or_sub_in_base": functools.partial(add_or_sub_in_base, sample_args_pure),
+        "add_or_sub1": functools.partial(add_or_sub, None, add_sub_sample_args_pure),
+        "add_sub_multiple2": functools.partial(add_sub_multiple, _INT, sample_args_pure),
+        "add_or_sub_in_base3": functools.partial(add_or_sub_in_base, sample_args_pure),
         # Multiplication and division
-        "mul": functools.partial(mul, None, sample_args_pure),
-        "div": functools.partial(div, None, sample_args_pure),
-        "mul_div_multiple": functools.partial(
+        "mul4": functools.partial(mul, None, sample_args_pure),
+        "div5": functools.partial(div, None, sample_args_pure),
+        "mul_div_multiple6": functools.partial(
             mul_div_multiple, _INT_OR_RATIONAL, sample_args_pure
         ),
         # All together!
-        "mixed": functools.partial(mixed, _INT_OR_RATIONAL, sample_args_pure),
+        "mixed7": functools.partial(mixed, _INT_OR_RATIONAL, sample_args_pure),
         # And some other arithmetic-related stuff.
-        "nearest_integer_root": functools.partial(
+        "nearest_integer_root8": functools.partial(
             nearest_integer_root, sample_args_pure
         ),
-        "simplify_surd": functools.partial(simplify_surd, None, sample_args_pure),
+        "simplify_surd9": functools.partial(simplify_surd, None, sample_args_pure),
     }
 
 
