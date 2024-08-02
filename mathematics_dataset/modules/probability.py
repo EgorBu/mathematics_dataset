@@ -35,7 +35,9 @@ from six.moves import range
 from six.moves import zip
 
 
-_LETTERS = string.ascii_lowercase
+_LETTERS = (
+    'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+)
 
 _MAX_FRAC_TRIVIAL_PROB = 0.1
 
@@ -50,6 +52,19 @@ _SWR_SAMPLE_COUNT_EXTRAPOLATE = [5, 5]
 _GERUNDS = {
     "pick": "picking",
 }
+
+
+def _sym_case(n, forms=('символ', 'символа', 'символов')):
+    if 10 <= n < 20:
+        return forms[2]
+
+    d = n % 10
+    if d == 1:
+        return forms[0]
+    elif d in [2, 3, 4]:
+        return forms[1]
+    else:
+        return forms[2]
 
 
 def _make_modules(is_train):
@@ -106,7 +121,7 @@ def _sequence_event(values, length, verb):
     events = [probability.DiscreteEvent([sample]) for sample in samples]
     event = probability.FiniteProductEvent(events)
     sequence = "".join(str(sample) for sample in samples)
-    event_description = "sequence {sequence}".format(sequence=sequence)
+    event_description = "последовательность {sequence}".format(sequence=sequence)
     return event, event_description
 
 
@@ -117,7 +132,7 @@ def _word_series(words, conjunction="and"):
         return ""
     if len_words == 1:
         return words[0]
-    return "{} {} {}".format(", ".join(words[:-1]), conjunction, words[-1])
+    return ', '.join(words)
 
 
 def _level_set_event(values, length, verb):
@@ -140,7 +155,7 @@ def _level_set_event(values, length, verb):
             "{verbing} {counts_and_values}",
         ]
     )
-    verbing = _GERUNDS[verb]
+    verbing = "набор"
     event_description = template.format(
         counts_and_values=counts_and_values, verbing=verbing
     )
@@ -213,7 +228,9 @@ def _swr_space(is_train, sample_range):
 
     random_variable.description = (
         str(display.StringNumber(num_sampled))
-        + " letters picked without replacement from "
+        + ' '
+        + _sym_case(num_sampled)
+        + " выбираются без возврата из набора "
         + sample.bag_contents
     )
 
@@ -247,13 +264,12 @@ def _sample_without_replacement_probability_question(is_train, event_fn, sample_
             break
 
     context = composition.Context()
-
     template = random.choice(
         [
-            "{random_variable_capitalize}. What is prob of {event}?",
-            "{random_variable_capitalize}. Give prob of {event}.",
-            "What is prob of {event} when {random_variable}?",
-            "Calculate prob of {event} when {random_variable}.",
+            "{random_variable_capitalize}. Какова вероятность получить {event}?",
+            "{random_variable_capitalize}. Вычислили вероятность получить {event}.",
+            "Какова вероятность получить {event} если {random_variable}?",
+            "Вычислили вероятность получить {event} если {random_variable}.",
         ]
     )
     question = example.question(

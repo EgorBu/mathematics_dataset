@@ -238,7 +238,7 @@ def _polynomial_entity(value, context):
         value=value,
         expression=polynomial,
         polynomial_variables=variables,
-        description="Let {function} = {polynomial}.",
+        description="Пусть {function} = {polynomial}.",
         handle=handle,
         function=handle_description,
         polynomial=polynomial,

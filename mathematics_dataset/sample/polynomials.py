@@ -369,7 +369,7 @@ def coefficients_linear_split(coefficients, entropy):
     for index, coefficient in enumerate(coefficients):
         entropy_coeff = entropy_coefficients[index]
         t = number.integer(entropy_coeff, signed=True)
-        x, y = diophantine_solve_linear_2d(c=coefficient, a=a, b=b, t=t)
+        x, y = diophantine_solve_linear_2d(c=int(coefficient), a=a, b=b, t=t)
         coefficients_1[index] = x
         coefficients_2[index] = y
 

@@ -192,11 +192,11 @@ def _differentiate_polynomial(value, sample_args, context, num_variables):
         return composition.Entity(
             context=context,
             value=composition.Polynomial(value),
-            description="Пусть {fn}({variables}) будет {nth}-ой производной от {eq}.",
+            description="Пусть {fn}({variables}) будет {nth} производной от {eq}.",
             handle=composition.FunctionHandle(fn_symbol),
             fn=fn_symbol,
             variables=variables_string,
-            nth=nth,
+            nth=nth.str_by_form('femn', 'datv'),
             eq=polynomial,
         )
 

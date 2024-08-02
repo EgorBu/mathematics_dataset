@@ -48,6 +48,7 @@ setup(
         "numpy>=1.10,<1.19",
         "six>=1.0,<2.0",
         "sympy>=1.2,<1.6",
+        "num2words==0.5.13"
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

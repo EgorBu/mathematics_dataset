@@ -107,10 +107,11 @@ def coefficient_named(value, sample_args, context=None):
 
     template = random.choice(
         [
-            "Express {expression} as {canonical} and give {target}.",
-            "Rearrange {expression} to {canonical} and give {target}.",
-            "Express {expression} in the form {canonical} and give {target}.",
-            "Rearrange {expression} to the form {canonical} and give {target}.",
+            "Представь {expression} как {canonical} и выдай значение {target}.",
+            "Представь {expression} в форме {canonical} и выдай значение {target}.",
+            "Преобразуй {expression} к виду {canonical} и выдай значение {target}.",
+            "Представь {expression} в форме {canonical} и вычисли {target}.",
+            "Преобразуй {expression} к виду {canonical} и вычисли {target}.",
         ]
     )
     return example.Problem(
@@ -126,10 +127,10 @@ def coefficient_named(value, sample_args, context=None):
 
 
 _TEMPLATES = [
-    "What is {composed}?",
-    "Calculate {composed}.",
-    "Give {composed}.",
-    "Determine {composed}.",
+    "Чему равно {composed}?",
+    "Вычисли {composed}.",
+    "Выдай {composed}.",
+    "Найди {composed}.",
 ]
 
 
@@ -187,7 +188,7 @@ def evaluate(value, sample_args, context=None):
             context=context,
             value=value,
             expression=composed,
-            description="Let {self} be {composed}.",
+            description="Пусть {self} равняется {composed}.",
             composed=composed,
         )
 
@@ -242,7 +243,7 @@ def add(value, sample_args, context=None):
         return composition.Entity(
             context=context,
             value=value,
-            description="Let {intermediate} = {composed}.",
+            description="Пусть {intermediate} = {composed}.",
             handle=composition.FunctionHandle(intermediate_symbol),
             intermediate=intermediate,
             composed=expression,
@@ -263,7 +264,14 @@ def expand(value, sample_args, context=None):
     entropy -= math.log10(max_order - min_order + 1)
     expression_ = polynomials.sample_with_brackets(variable, order, entropy)
     expanded = sympy.expand(expression_)
-    template = random.choice(["Expand {expression}."])
+    template = ' '.join([
+        random.choice(["Сократи", "Упрости"]),
+        random.choice(["выражение"]),
+    ])
+    template = ' '.join([
+        random.choice([template, "Раскрой скобки в выражении"]),
+        "{expression}"
+    ])
     return example.Problem(
         question=example.question(context, template, expression=expression_),
         answer=expanded,
@@ -313,7 +321,14 @@ def collect(value, sample_args, context=None):
     context.sample_by_replacing_constants(sample_args, unsimplified)
 
     if is_question:
-        template = "Collect the terms in {unsimplified}."
+        act = random.choice(["Сократи", "Упрости", "Приведи к стандартному виду"])
+        ent = random.choice(["полином", "многочлен"])
+
+        template = ' '.join([
+            act,
+            ent,
+            "{unsimplified}"
+        ])
         return example.Problem(
             question=example.question(context, template, unsimplified=unsimplified),
             answer=simplified,
@@ -327,7 +342,7 @@ def collect(value, sample_args, context=None):
             handle=composition.FunctionHandle(function_symbol),
             expression=unsimplified,
             polynomial_variables=variables,
-            description="Let {function} = {unsimplified}.",
+            description="Пусть {function} = {unsimplified}.",
             function=function,
             unsimplified=unsimplified,
         )
@@ -378,11 +393,18 @@ def simplify_power(value, sample_args, context=None):
     unsimplified = polynomials.sample_messy_power(variable, entropy)
     answer = unsimplified.sympy()
 
-    template = random.choice(
+    template = [random.choice(["Сократи ", "Упрости "])]
+    template.append("{unsimplified}")
+    template.append(random.choice(
         [
-            "Simplify {unsimplified} assuming {variable} is positive.",
+            "предполагая, что {variable} положительное.",
+            "в предположении, что {variable} положительное.",
+            "предполагая {variable} больше нуля.",
+            "при {variable} больше нуля.",
+            "при положительном {variable}.",
         ]
-    )
+    ))
+    template = ' '.join(template)
     return example.Problem(
         example.question(
             context, template, unsimplified=unsimplified, variable=variable

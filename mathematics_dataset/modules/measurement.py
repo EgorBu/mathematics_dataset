@@ -22,14 +22,20 @@ import collections
 import functools
 import random
 
+from typing import Union
+
 # Dependency imports
 from mathematics_dataset import example
 from mathematics_dataset.modules import train_test_split
 from mathematics_dataset.sample import number
 from mathematics_dataset.util import composition
 from mathematics_dataset.util import display
+from mathematics_dataset.util.unit_cases import UNIT_CASES
+from mathematics_dataset.util.display import Decimal
 import six
 import sympy
+
+from sympy import Rational
 
 
 def _make_modules(is_train):
@@ -65,61 +71,107 @@ def test_extra():
 Unit = collections.namedtuple("Unit", ("name", "symbol"))
 
 
-MICRO_SYMBOL = "u"
-
-
 LENGTH = {
-    Unit("meter", "m"): 1,
-    Unit("kilometer", "km"): 1000,
-    Unit("centimeter", "cm"): sympy.Rational(1, 100),
-    Unit("millimeter", "mm"): sympy.Rational(1, 1000),
-    Unit("micrometer", "um"): sympy.Rational(1, 1e6),
-    Unit("nanometer", "nm"): sympy.Rational(1, 1e9),
+    Unit("метр", "м"): 1,
+    Unit("километр", "км"): 1000,
+    Unit("сантиметр", "см"): sympy.Rational(1, 100),
+    Unit("миллиметр", "мм"): sympy.Rational(1, 1000),
+    Unit("микрометр", "мкм"): sympy.Rational(1, 1e6),
+    Unit("нанометр", "нм"): sympy.Rational(1, 1e9),
 }
 
 TIME = {
-    Unit("second", "s"): 1,
-    Unit("minute", None): 60,
-    Unit("hour", None): 60 * 60,
-    Unit("day", None): 24 * 60 * 60,
-    Unit("week", None): 7 * 24 * 60 * 60,
-    Unit("millisecond", "ms"): sympy.Rational(1, 1e3),
-    Unit("microsecond", MICRO_SYMBOL + "s"): sympy.Rational(1, 1e6),
-    Unit("nanosecond", "ns"): sympy.Rational(1, 1e9),
+    Unit("секунда", "с"): 1,
+    Unit("минута", None): 60,
+    Unit("час", None): 60 * 60,
+    Unit("день", None): 24 * 60 * 60,
+    Unit("неделя", None): 7 * 24 * 60 * 60,
+    Unit("миллисекунда", "мс"): sympy.Rational(1, 1e3),
+    Unit("микросекунда", "мкс"): sympy.Rational(1, 1e6),
+    Unit("наносекунда", "нс"): sympy.Rational(1, 1e9),
 }
 
 TIME_YEARLY = {
-    Unit("year", None): 1,
-    Unit("decade", None): 10,
-    Unit("century", None): 100,
-    Unit("millennium", None): 1000,
-    Unit("month", None): sympy.Rational(1, 12),
+    Unit("год", None): 1,
+    Unit("десятилетие", None): 10,
+    Unit("век", None): 100,
+    Unit("тысячелетие", None): 1000,
+    Unit("месяц", None): sympy.Rational(1, 12),
 }
 
 MASS = {
-    Unit("kilogram", "kg"): 1,  # Yes, the *kilo*gram is the SI base unit.
-    Unit("tonne", "t"): 1000,
-    Unit("gram", "g"): sympy.Rational(1, 1e3),
-    Unit("milligram", "mg"): sympy.Rational(1, 1e6),
-    Unit("microgram", MICRO_SYMBOL + "g"): sympy.Rational(1, 1e9),
-    Unit("nanogram", "ng"): sympy.Rational(1, 1e12),
+    Unit("килограмм", "кг"): 1,  # Yes, the *kilo*gram is the SI base unit.
+    Unit("тонна", "т"): 1000,
+    Unit("грамм", "г"): sympy.Rational(1, 1e3),
+    Unit("миллиграмм", "мг"): sympy.Rational(1, 1e6),
+    Unit("микрограмм", "мкг"): sympy.Rational(1, 1e9),
+    Unit("нанограмм", "нг"): sympy.Rational(1, 1e12),
 }
 
 VOLUME = {
-    Unit("litre", "l"): 1,
-    Unit("millilitre", "ml"): sympy.Rational(1, 1000),
+    Unit("литр", "л"): 1,
+    Unit("миллилитр", "мл"): sympy.Rational(1, 1000),
 }
 
 
-DIMENSIONS = [LENGTH, TIME, TIME_YEARLY, MASS, VOLUME]
+DIMENSIONS = [
+    LENGTH,
+    TIME,
+    TIME_YEARLY,
+    MASS,
+    VOLUME
+]
 
 
-def pluralize(name):
-    if name == "century":
-        return "centuries"
-    if name == "millennium":
-        return "millennia"
-    return name + "s"
+def set_form(root: str, number: str, case: str):
+    '''
+    Set form for unit.
+    - root in DIMENSIONS
+    - number in ['plur', 'sing]
+    - case in ['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']
+
+    set_form('метр', 'plur', 'gent') = 'метров'
+    set_form('минута', 'sing', 'loct') = 'минуте'
+    set_form('тонна', 'sing', 'accs') = 'тонну'
+    '''
+    return UNIT_CASES[root][number][case]
+
+
+def base_form(root: str,
+              value: Union[Decimal, Rational, int],
+              case: str):
+    '''
+    Set form for base unit. Unit form depends on quantity.
+    - root in DIMENSIONS
+    - value = quantity of base unit to transform
+    - case in ['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']
+
+    set_form('метр', 'plur', 'gent') = 'метров'
+    set_form('минута', 'sing', 'loct') = 'минуте'
+    set_form('тонна', 'sing', 'accs') = 'тонну'
+    '''
+    res = None
+    if isinstance(value, Decimal):
+        value = value._value
+    if isinstance(value, int) or value.is_integer:
+        if value % 100 > 20:
+            d = int(value) % 10
+        else:
+            d = int(value) % 20
+
+        if d == 1:
+            res = set_form(root, 'sing', case)
+        elif case in ['gent', 'datv', 'ablt', 'loct']:
+            res = set_form(root, 'plur', case)
+        else:
+            if d in (2, 3, 4):
+                res = set_form(root, 'sing', 'gent')
+            else:
+                res = set_form(root, 'plur', 'gent')
+    else:
+        res = set_form(root, 'sing', 'gent')
+
+    return res
 
 
 def _factor_non_decimal(value):
@@ -154,21 +206,46 @@ def _conversion_decimal(context, is_train, is_extrapolation):
         if train_test_split.is_train(base_value) == is_train:
             break
 
+    # templates = [(template, (target_number, target_case), base_case), ...]
     templates = [
-        "How many {target_name} are there in {base_value} {base_name}?",
-        "What is {base_value} {base_name} in {target_name}?",
-        "Convert {base_value} {base_name} to {target_name}.",
+        (
+            "Сколько {target_name} содержат {base_value} {base_name}?",
+            ('plur', 'gent'),
+            'loct'
+        ),
+        (
+            "Чему равно {base_value} {base_name} в {target_name}?",
+            ('plur', 'loct'),
+            'gent'
+        ),
+        (
+            "Переведи {base_value} {base_name} в {target_name}.",
+            ('plur', 'accs'),
+            'gent'
+        ),
     ]
     if base_unit.symbol is not None:
         templates += [
-            "How many {target_name} are there in {base_value}{base_symbol}?",
-            "What is {base_value}{base_symbol} in {target_name}?",
-            "Convert {base_value}{base_symbol} to {target_name}.",
+            (
+                "Сколько {target_name} содержится в {base_value}{base_symbol}?",
+                ('plur', 'gent'),
+                'loct'
+            ),
+            (
+                "Чему равно {base_value}{base_symbol} в {target_name}?",
+                ('plur', 'loct'),
+                'gent'
+            ),
+            (
+                "Переведи {base_value}{base_symbol} в {target_name}.",
+                ('plur', 'accs'),
+                'gent'
+            ),
         ]
-    template = random.choice(templates)
+    template, form_target, case_base = random.choice(templates)
 
-    base_name = pluralize(base_unit.name)
-    target_name = pluralize(target_unit.name)
+    base_name = base_form(base_unit.name, base_value, case_base)
+    target_name = set_form(target_unit.name, *form_target)
 
     question = example.question(
         context,
@@ -207,10 +284,10 @@ def _conversion_fraction(context, is_train):
         ):
             break
 
-    template = random.choice(
+    template, case = random.choice(
         [
-            "How many {target_name} are there in {base_value} of a {base_name}?",
-            "What is {base_value} of a {base_name} in {target_name}?",
+            ("Сколько {target_name} содержат {base_value} {base_name}?", 'gent'),
+            ("Чему равно {base_value} {base_name} в {target_name}?", 'loct'),
         ]
     )
 
@@ -219,12 +296,15 @@ def _conversion_fraction(context, is_train):
     else:
         base_value_string = display.StringNumber(base_value)  # e.g., two thirds
 
+    base_name = base_form(base_unit.name, base_value, 'gent')
+    target_name = set_form(target_unit.name, 'plur', case)
+
     question = example.question(
         context,
         template,
-        base_name=base_unit.name,
+        base_name=base_name,
         base_value=base_value_string,
-        target_name=pluralize(target_unit.name),
+        target_name=target_name,
     )
     return example.Problem(question=question, answer=answer)
 
@@ -259,20 +339,30 @@ def time(is_train):
         hours = (hours - 1) % 12 + 1
         return "{}:{:02} {}".format(hours, minutes, am_pm)
 
-    start = format_12hr(start_minutes)
-    end = format_12hr(end_minutes)
+    def format_24hr(minutes):
+        hours = (minutes // 60) % 24
+        minutes %= 60
+        return f"{hours}:{minutes:02d}"
+
+    start = format_24hr(start_minutes)
+    end = format_24hr(end_minutes)
 
     which_question = random.randint(0, 3)
     if which_question == 0:
         # Question: What is start = end - duration?
         template = random.choice(
             [
-                "What is {duration} minutes before {end}?",
+                "Сколько времени было за {duration} {unit} до {end}?",
             ]
         )
+        unit = base_form('минута', duration_minutes, 'accs')
         return example.Problem(
             question=example.question(
-                context, template, duration=duration_minutes, end=end
+                context,
+                template,
+                duration=duration_minutes,
+                end=end,
+                unit=unit
             ),
             answer=start,
         )
@@ -280,12 +370,16 @@ def time(is_train):
         # Question: What is end = start + duration?
         template = random.choice(
             [
-                "What is {duration} minutes after {start}?",
+                "Сколько времени будет через {duration} {unit} после {start}?",
             ]
         )
+        unit = base_form('минута', duration_minutes, 'accs')
         return example.Problem(
             question=example.question(
-                context, template, duration=duration_minutes, start=start
+                context, template,
+                duration=duration_minutes,
+                start=start,
+                unit=unit
             ),
             answer=end,
         )
@@ -293,7 +387,7 @@ def time(is_train):
         # Question: What is duration = end - start?
         template = random.choice(
             [
-                "How many minutes are there between {start} and {end}?",
+                "Сколько минут между {start} и {end}?",
             ]
         )
         return example.Problem(
