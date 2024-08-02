@@ -155,6 +155,7 @@ _ORD_ROOTS = [
 
 
 # Numbers with 3 in the end is exception in terms of cases.
+# `третИЙ` - _ord_cases_3[True]["nomn"]["male"]
 # _ord_cases_3: Dict
 #     - is_singular: Dict[Bool, Dict]
 #         - case: Dict[str, Optional[Dir, str]]

@@ -71,27 +71,24 @@ def test_extra():
 Unit = collections.namedtuple("Unit", ("name", "symbol"))
 
 
-MICRO_SYMBOL = "u"
-
-
 LENGTH = {
-    Unit("метр", "m"): 1,
-    Unit("километр", "km"): 1000,
-    Unit("сантиметр", "cm"): sympy.Rational(1, 100),
-    Unit("миллиметр", "mm"): sympy.Rational(1, 1000),
-    Unit("микрометр", "um"): sympy.Rational(1, 1e6),
-    Unit("нанометр", "nm"): sympy.Rational(1, 1e9),
+    Unit("метр", "м"): 1,
+    Unit("километр", "км"): 1000,
+    Unit("сантиметр", "см"): sympy.Rational(1, 100),
+    Unit("миллиметр", "мм"): sympy.Rational(1, 1000),
+    Unit("микрометр", "мкм"): sympy.Rational(1, 1e6),
+    Unit("нанометр", "нм"): sympy.Rational(1, 1e9),
 }
 
 TIME = {
-    Unit("секунда", "s"): 1,
+    Unit("секунда", "с"): 1,
     Unit("минута", None): 60,
     Unit("час", None): 60 * 60,
     Unit("день", None): 24 * 60 * 60,
     Unit("неделя", None): 7 * 24 * 60 * 60,
-    Unit("миллисекунда", "ms"): sympy.Rational(1, 1e3),
-    Unit("микросекунда", MICRO_SYMBOL + "s"): sympy.Rational(1, 1e6),
-    Unit("наносекунда", "ns"): sympy.Rational(1, 1e9),
+    Unit("миллисекунда", "мс"): sympy.Rational(1, 1e3),
+    Unit("микросекунда", "мкс"): sympy.Rational(1, 1e6),
+    Unit("наносекунда", "нс"): sympy.Rational(1, 1e9),
 }
 
 TIME_YEARLY = {
@@ -103,17 +100,17 @@ TIME_YEARLY = {
 }
 
 MASS = {
-    Unit("килограмм", "kg"): 1,  # Yes, the *kilo*gram is the SI base unit.
-    Unit("тонна", "t"): 1000,
-    Unit("грамм", "g"): sympy.Rational(1, 1e3),
-    Unit("миллиграмм", "mg"): sympy.Rational(1, 1e6),
-    Unit("микрограмм", MICRO_SYMBOL + "g"): sympy.Rational(1, 1e9),
-    Unit("нанограмм", "ng"): sympy.Rational(1, 1e12),
+    Unit("килограмм", "кг"): 1,  # Yes, the *kilo*gram is the SI base unit.
+    Unit("тонна", "т"): 1000,
+    Unit("грамм", "г"): sympy.Rational(1, 1e3),
+    Unit("миллиграмм", "мг"): sympy.Rational(1, 1e6),
+    Unit("микрограмм", "мкг"): sympy.Rational(1, 1e9),
+    Unit("нанограмм", "нг"): sympy.Rational(1, 1e12),
 }
 
 VOLUME = {
-    Unit("литр", "l"): 1,
-    Unit("миллилитр", "ml"): sympy.Rational(1, 1000),
+    Unit("литр", "л"): 1,
+    Unit("миллилитр", "мл"): sympy.Rational(1, 1000),
 }
 
 
@@ -127,12 +124,32 @@ DIMENSIONS = [
 
 
 def set_form(root: str, number: str, case: str):
+    '''
+    Set form for unit.
+    - root in DIMENSIONS
+    - number in ['plur', 'sing]
+    - case in ['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']
+
+    set_form('метр', 'plur', 'gent') = 'метров'
+    set_form('минута', 'sing', 'loct') = 'минуте'
+    set_form('тонна', 'sing', 'accs') = 'тонну'
+    '''
     return UNIT_CASES[root][number][case]
 
 
 def base_form(root: str,
-              value: Union[Decimal, Rational],
+              value: Union[Decimal, Rational, int],
               case: str):
+    '''
+    Set form for base unit. Unit form depends on quantity.
+    - root in DIMENSIONS
+    - value = quantity of base unit to transform
+    - case in ['nomn', 'gent', 'datv', 'accs', 'ablt', 'loct']
+
+    set_form('метр', 'plur', 'gent') = 'метров'
+    set_form('минута', 'sing', 'loct') = 'минуте'
+    set_form('тонна', 'sing', 'accs') = 'тонну'
+    '''
     res = None
     if isinstance(value, Decimal):
         value = value._value
@@ -155,14 +172,6 @@ def base_form(root: str,
         res = set_form(root, 'sing', 'gent')
 
     return res
-
-
-def pluralize(name):
-    if name == "century":
-        return "centuries"
-    if name == "millennium":
-        return "millennia"
-    return name + "s"
 
 
 def _factor_non_decimal(value):
@@ -197,7 +206,7 @@ def _conversion_decimal(context, is_train, is_extrapolation):
         if train_test_split.is_train(base_value) == is_train:
             break
 
-    # templates = tempate x (target_number, target_case) x base_case
+    # templates = [(template, (target_number, target_case), base_case), ...]
     templates = [
         (
             "Сколько {target_name} содержат {base_value} {base_name}?",
