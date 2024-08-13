@@ -45,14 +45,14 @@ _NUM_MODULES_COMPOSED = [2, 4]
 def _make_modules(entropy, num_modules_composed):
     """Returns modules given "difficulty" parameters."""
     fns = {
-        "gcd": gcd,
-        "lcm": lcm,
-        "div_remainder": div_remainder,
-        "is_prime": is_prime,
-        "is_factor": is_factor,
-        "round_number": round_number,
-        "place_value": place_value,
-        "list_prime_factors": list_prime_factors,
+        "gcd1": gcd,
+        "lcm2": lcm,
+        "div_remainder3": div_remainder,
+        "is_prime4": is_prime,
+        "is_factor5": is_factor,
+        "round_number6": round_number,
+        "place_value7": place_value,
+        "list_prime_factors8": list_prime_factors,
     }
 
     # These modules don't have both pure and composed.
@@ -67,7 +67,7 @@ def _make_modules(entropy, num_modules_composed):
 
     for name, module in six.iteritems(fns):
         modules[name] = functools.partial(module, None, sample_args_pure)
-        modules[name + "_composed"] = functools.partial(
+        modules[name[:-1] + str(int(name[-1]) + 1) + "_composed"] = functools.partial(
             module, None, sample_args_composed
         )
 

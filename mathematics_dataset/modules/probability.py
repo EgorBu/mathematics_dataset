@@ -70,10 +70,10 @@ def _sym_case(n, forms=('символ', 'символа', 'символов')):
 def _make_modules(is_train):
     """Returns modules, with split based on the boolean `is_train`."""
     return {
-        "swr_p_sequence": functools.partial(
+        "swr_p_sequence1": functools.partial(
             swr_prob_sequence, is_train=is_train, sample_range=_SWR_SAMPLE_COUNT
         ),
-        "swr_p_level_set": functools.partial(
+        "swr_p_level_set2": functools.partial(
             swr_prob_level_set, is_train=is_train, sample_range=_SWR_SAMPLE_COUNT
         ),
     }
