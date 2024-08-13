@@ -42,10 +42,10 @@ def _make_modules(entropy):
     sample_args_composed = composition.PreSampleArgs(2, 4, *entropy)
 
     return {
-        "differentiate_composed": functools.partial(
+        "differentiate_composed1": functools.partial(
             differentiate_univariate, None, sample_args_composed
         ),
-        "differentiate": functools.partial(differentiate, None, sample_args_pure),
+        "differentiate2": functools.partial(differentiate, None, sample_args_pure),
     }
 
 

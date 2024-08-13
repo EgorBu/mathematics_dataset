@@ -41,10 +41,10 @@ from sympy import Rational
 def _make_modules(is_train):
     """Returns modules, with split based on the boolean `is_train`."""
     return {
-        "conversion": functools.partial(
+        "conversion1": functools.partial(
             conversion, is_train=is_train, is_extrapolation=False
         ),
-        "time": functools.partial(time, is_train=is_train),
+        "time2": functools.partial(time, is_train=is_train),
     }
 
 

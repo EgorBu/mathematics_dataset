@@ -47,14 +47,14 @@ def _make_modules(entropy):
     sample_args_composed = composition.PreSampleArgs(2, 4, *entropy)
 
     return {
-        "pair": functools.partial(pair, sample_args_pure),
-        "pair_composed": functools.partial(pair, sample_args_composed),
-        "kth_biggest": functools.partial(kth_biggest, sample_args_pure),
-        "kth_biggest_composed": functools.partial(kth_biggest, sample_args_composed),
-        "closest": functools.partial(closest, sample_args_pure),
-        "closest_composed": functools.partial(closest, sample_args_composed),
-        "sort": functools.partial(sort, sample_args_pure),
-        "sort_composed": functools.partial(sort, sample_args_composed),
+        "pair1": functools.partial(pair, sample_args_pure),
+        "pair_composed2": functools.partial(pair, sample_args_composed),
+        "kth_biggest3": functools.partial(kth_biggest, sample_args_pure),
+        "kth_biggest_composed4": functools.partial(kth_biggest, sample_args_composed),
+        "closest5": functools.partial(closest, sample_args_pure),
+        "closest_composed6": functools.partial(closest, sample_args_composed),
+        "sort7": functools.partial(sort, sample_args_pure),
+        "sort_composed8": functools.partial(sort, sample_args_composed),
     }
 
 

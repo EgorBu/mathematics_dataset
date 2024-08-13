@@ -53,21 +53,21 @@ def _make_modules(entropy):
 
     return {
         # Solving equations:
-        "polynomial_roots": functools.partial(polynomial_roots, None, sample_args_pure),
-        "polynomial_roots_composed": functools.partial(
+        "polynomial_roots1": functools.partial(polynomial_roots, None, sample_args_pure),
+        "polynomial_roots_composed2": functools.partial(
             polynomial_roots, None, sample_args_composed
         ),
-        "linear_1d": functools.partial(solve_linear_1d, None, sample_args_pure),
-        "linear_1d_composed": functools.partial(
+        "linear_1d3": functools.partial(solve_linear_1d, None, sample_args_pure),
+        "linear_1d_composed4": functools.partial(
             solve_linear_1d, None, sample_args_composed
         ),
-        "linear_2d": functools.partial(solve_linear_2d, None, sample_args_pure),
-        "linear_2d_composed": functools.partial(
+        "linear_2d5": functools.partial(solve_linear_2d, None, sample_args_pure),
+        "linear_2d_composed6": functools.partial(
             solve_linear_2d, None, sample_args_composed
         ),
         # Sequences:
-        "sequence_next_term": functools.partial(sequence_next_term, *entropy),
-        "sequence_nth_term": functools.partial(sequence_nth_term, *entropy),
+        "sequence_next_term7": functools.partial(sequence_next_term, *entropy),
+        "sequence_nth_term8": functools.partial(sequence_nth_term, *entropy),
     }
 
 

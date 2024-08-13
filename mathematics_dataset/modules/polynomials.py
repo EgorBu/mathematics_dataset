@@ -44,18 +44,18 @@ def _make_modules(entropy):
     sample_args_mixed = composition.PreSampleArgs(1, 4, *entropy)
 
     return {
-        "coefficient_named": functools.partial(
+        "coefficient_named1": functools.partial(
             coefficient_named, None, sample_args_pure
         ),
-        "evaluate": functools.partial(evaluate, None, sample_args_pure),
-        "evaluate_composed": functools.partial(evaluate, None, sample_args_composed),
+        "evaluate2": functools.partial(evaluate, None, sample_args_pure),
+        "evaluate_composed3": functools.partial(evaluate, None, sample_args_composed),
         # TODO(b/124038948): consider doing pure sample args for 'add'?
-        "add": functools.partial(add, None, sample_args_mixed),
-        "expand": functools.partial(expand, None, sample_args_pure),
-        "collect": functools.partial(collect, None, sample_args_pure),
-        "compose": functools.partial(compose, None, sample_args_mixed),
+        "add4": functools.partial(add, None, sample_args_mixed),
+        "expand5": functools.partial(expand, None, sample_args_pure),
+        "collect6": functools.partial(collect, None, sample_args_pure),
+        "compose7": functools.partial(compose, None, sample_args_mixed),
         # Rearranging powers:
-        "simplify_power": functools.partial(simplify_power, None, sample_args_pure),
+        "simplify_power8": functools.partial(simplify_power, None, sample_args_pure),
     }
 
 
