@@ -56,7 +56,9 @@ def _make_modules(entropy, add_sub_entropy):
     return {
         # Addition and subtraction of integers (and decimals)
         "add_or_sub1": functools.partial(add_or_sub, None, add_sub_sample_args_pure),
-        "add_sub_multiple2": functools.partial(add_sub_multiple, _INT, sample_args_pure),
+        "add_sub_multiple2": functools.partial(
+            add_sub_multiple, _INT, sample_args_pure
+        ),
         "add_or_sub_in_base3": functools.partial(add_or_sub_in_base, sample_args_pure),
         # Multiplication and division
         "mul4": functools.partial(mul, None, sample_args_pure),
@@ -150,7 +152,10 @@ def _add_question_or_entity(context, p, q, is_question):
             ]
         )
         return example.Problem(
-            question=example.question(context, template, exp=sympy.Add(p.value, q.value, evaluate=False)), answer=value
+            question=example.question(
+                context, template, exp=sympy.Add(p.value, q.value, evaluate=False)
+            ),
+            answer=value,
         )
     else:
         return composition.Entity(
@@ -180,9 +185,7 @@ def _sub_question_or_entity(context, p, q, is_question):
             # We calculate p - q, so the difference (|p - q|) is the correct answer.
             for adjective in ["разница"]:
                 for pair in ["между {p} и {q}", "между {q} и {p}"]:
-                    templates.append(
-                        "Чему равняется {} {}?".format(adjective, pair)
-                    )
+                    templates.append("Чему равняется {} {}?".format(adjective, pair))
         template = random.choice(templates)
         return example.Problem(
             question=example.question(context, template, p=p, q=q), answer=value
@@ -250,10 +253,14 @@ def add_or_sub_in_base(sample_args):
     base = random.randint(2, 16)
     if random.choice([False, True]):
         answer = p + q
-        template = "В системе счисления с основанием {base}, сколько будет {p} плюс {q}?"
+        template = (
+            "В системе счисления с основанием {base}, сколько будет {p} плюс {q}?"
+        )
     else:
         answer = p - q
-        template = "В системе счисления с основанием {base}, сколько будет {p} минус {q}?"
+        template = (
+            "В системе счисления с основанием {base}, сколько будет {p} минус {q}?"
+        )
     return example.Problem(
         question=example.question(
             context,
@@ -366,7 +373,7 @@ def nearest_integer_root(sample_args):
     answer = int(round(value ** (1 / one_over_exponent)))
 
     templates = [
-         "Чему равно число {value} в степени 1/{one_over_exponent}, округленное до ближайшего целого числа?",
+        "Чему равно число {value} в степени 1/{one_over_exponent}, округленное до ближайшего целого числа?",
     ]
 
     if one_over_exponent != 2:  # "What is the second root of 4?" never used.

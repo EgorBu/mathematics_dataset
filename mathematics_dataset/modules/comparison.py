@@ -105,7 +105,7 @@ def _make_comparison_question(context, left, right):
             template = random.choice(
                 [
                     "Что больше: {left} или {right}?",
-                    "Какое значение больше: {left} или {right}?"
+                    "Какое значение больше: {left} или {right}?",
                 ]
             )
         else:
@@ -169,17 +169,9 @@ def _make_comparison_question(context, left, right):
 
     comparison = random.choice(list(comparisons.keys()))
     template = random.choice(templates[comparison])
-    qt = random.choice([
-        '',
-        'Правда ли что ',
-        'Верно ли что '
-    ])
+    qt = random.choice(["", "Правда ли что ", "Верно ли что "])
     question = example.question(
-        context,
-        template,
-        left=left,
-        right=right,
-        question_type=qt
+        context, template, left=left, right=right, question_type=qt
     )
     answer = comparisons[comparison](left.value, right.value)
 
@@ -355,13 +347,9 @@ def kth_biggest(sample_args, count=None):
         answer = sorted_entities[ordinal - 1]
         adjective = "наименьшее"
 
-    adjective = " ".join([
-        display.StringOrdinal(ordinal).str_by_form(
-            gen='mid',
-            case='nomn'
-        ),
-        adjective
-    ])
+    adjective = " ".join(
+        [display.StringOrdinal(ordinal).str_by_form(gen="mid", case="nomn"), adjective]
+    )
 
     if display_multichoice:
         return _kth_biggest_multichoice_question(
@@ -377,16 +365,14 @@ def _closest_in_list_question(context, entities, target, adjective, answer):
     """Ask for the closest to a given value in a list."""
     entity_dict, values_template = _entities_to_list(entities)
 
-    template = random.choice([
-        "Какое значение {adjective} к {target} среди " + values_template + "?",
-        "Что {adjective} к {target} среди " + values_template + "?",
-    ])
+    template = random.choice(
+        [
+            "Какое значение {adjective} к {target} среди " + values_template + "?",
+            "Что {adjective} к {target} среди " + values_template + "?",
+        ]
+    )
     question = example.question(
-        context,
-        template,
-        adjective=adjective,
-        target=target,
-        **entity_dict
+        context, template, adjective=adjective, target=target, **entity_dict
     )
     return example.Problem(question=question, answer=answer.handle)
 
@@ -396,10 +382,12 @@ def _closest_multichoice_question(context, entities, target, adjective, answer):
     entity_dict, choices_template, answer_choice = _entities_to_choices(
         entities, answer
     )
-    template = random.choice([
-        "Какое значение {adjective} к {target}?",
-        "Что {adjective} к {target}?",
-    ])
+    template = random.choice(
+        [
+            "Какое значение {adjective} к {target}?",
+            "Что {adjective} к {target}?",
+        ]
+    )
 
     question = example.question(
         context,
@@ -447,7 +435,7 @@ def closest(sample_args, count=None):
     min_difference = min(differences)
     answer_index = differences.index(min_difference)
     answer = entities[answer_index]
-    adjective = random.choice(['ближайшее', 'наиболее близкое'])
+    adjective = random.choice(["ближайшее", "наиболее близкое"])
 
     if display_multichoice:
         return _closest_multichoice_question(
@@ -488,15 +476,9 @@ def sort(sample_args, count=None):
         "Расположи " + unsorted_template + " {direction}.",
     ]
     if ascending:
-        direction = random.choice([
-            "в возрастающем порядке",
-            "в порядке возрастания"
-        ])
+        direction = random.choice(["в возрастающем порядке", "в порядке возрастания"])
     else:
-        direction = random.choice([
-            "в убывающем порядке",
-            "в порядке убывания"
-        ])
+        direction = random.choice(["в убывающем порядке", "в порядке убывания"])
     template = random.choice(templates)
 
     sorted_entities = sorted(entities, key=_entity_sort_key, reverse=(not ascending))

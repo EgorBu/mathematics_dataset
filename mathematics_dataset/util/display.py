@@ -34,7 +34,7 @@ import decimal
 import sympy
 from num2words import num2words
 
-_LANG = 'ru'
+_LANG = "ru"
 
 # For converting integers to words:
 _INTEGER_LOW = [
@@ -131,26 +131,26 @@ _PLURAL_DENOMINATORS = [
 
 # For converting ordinals to words:
 _ORD_ROOTS = [
-    'нулев',
-    'перв',
-    'втор',
-    'трет',
-    'четверт',
-    'пят',
-    'шест',
-    'седьм',
-    'восьм',
-    'девят',
-    'десят',
-    'одиннадцат',
-    'двенадцат',
-    'тринадцат',
-    'четырнадцат',
-    'пятнадцат',
-    'шестнадцат',
-    'семнадцат',
-    'восемнадцат',
-    'девятнадцат',
+    "нулев",
+    "перв",
+    "втор",
+    "трет",
+    "четверт",
+    "пят",
+    "шест",
+    "седьм",
+    "восьм",
+    "девят",
+    "десят",
+    "одиннадцат",
+    "двенадцат",
+    "тринадцат",
+    "четырнадцат",
+    "пятнадцат",
+    "шестнадцат",
+    "семнадцат",
+    "восемнадцат",
+    "девятнадцат",
 ]
 
 
@@ -162,84 +162,81 @@ _ORD_ROOTS = [
 #             - *gender*: Dict[str, str]
 _ord_cases_3 = {
     True: {
-        'nomn': {'male': 'ий', 'femn': 'ья', 'mid': 'ье'},
-        'gent': {'male': 'ьего', 'femn': 'ьей', 'mid': 'ьего'},
-        "datv": {'male': 'ьему', 'femn': 'ьей', 'mid': 'ьему'}
+        "nomn": {"male": "ий", "femn": "ья", "mid": "ье"},
+        "gent": {"male": "ьего", "femn": "ьей", "mid": "ьего"},
+        "datv": {"male": "ьему", "femn": "ьей", "mid": "ьему"},
     },
     False: {
-        'nomn': 'ьи',
-        'gent': 'ьих',
+        "nomn": "ьи",
+        "gent": "ьих",
         "datv": "ьим",
         "accs": "ьи",
         "ablt": "ьими",
-        "loct": "ьих"
-    }
+        "loct": "ьих",
+    },
 }
 
 
-def _get_ord_cases(x: int,
-                   gen: str = 'male',
-                   case: str = 'nomn',
-                   is_sing: bool = True):
+def _get_ord_cases(x: int, gen: str = "male", case: str = "nomn", is_sing: bool = True):
     if x < 0 or x > len(_ORD_ROOTS):
         raise ValueError("Unsupported ordinal {}.".format(x))
     root = _ORD_ROOTS[x]
-    end = '![Warning]'
+    end = "![Warning]"
     if x == 3:
         if is_sing:
             end = _ord_cases_3[is_sing][case][gen]
         else:
             end = _ord_cases_3[is_sing][case]
     elif is_sing:
-        if gen == 'male':
-            if case == 'nomn':
+        if gen == "male":
+            if case == "nomn":
                 if x in (0, 2, 6, 7, 8):
-                    end = 'ой'
+                    end = "ой"
                 else:
-                    end = 'ый'
-            if case == 'datv':
-                end = 'ому'
-        elif gen == 'femn':
-            if case == 'nomn':
-                end = 'ая'
-            elif case in ['datv', 'gent']:
-                end = 'ой'
+                    end = "ый"
+            if case == "datv":
+                end = "ому"
+        elif gen == "femn":
+            if case == "nomn":
+                end = "ая"
+            elif case in ["datv", "gent"]:
+                end = "ой"
         else:
-            if case == 'nomn':
-                end = 'ое'
-            elif case == 'datv':
-                end = 'ому'
+            if case == "nomn":
+                end = "ое"
+            elif case == "datv":
+                end = "ому"
     else:
-        if case in ['nomn', 'accs']:
-            end = 'ые'
-        elif case in ['gent', 'loct']:
-            end = 'ых'
-        elif case == 'datv':
-            end = 'ым'
+        if case in ["nomn", "accs"]:
+            end = "ые"
+        elif case in ["gent", "loct"]:
+            end = "ых"
+        elif case == "datv":
+            end = "ым"
         else:
-            end = 'ыми'
+            end = "ыми"
 
     return root + end
 
 
 def _get_numer(x: int):
-    '''Get numeral string for rational'''
+    """Get numeral string for rational"""
     l = x % 100
     n = x - l
-    words = [num2words(n, lang='ru')] if n > 0 else []
+    words = [num2words(n, lang="ru")] if n > 0 else []
     l0 = l % 10
     if not 10 < l < 20 and l0 in [1, 2]:
         l1 = l - l0
         if l1 > 0:
-            words.append(num2words(l1, lang='ru'))
+            words.append(num2words(l1, lang="ru"))
         if l0 == 1:
-            words.append('одна')
+            words.append("одна")
         else:
-            words.append('две')
+            words.append("две")
     else:
-        words.append(num2words(l, lang='ru'))
+        words.append(num2words(l, lang="ru"))
 
-    return ' '.join(words)
+    return " ".join(words)
 
 
 class Decimal(object):
@@ -461,9 +458,9 @@ class StringNumber(object):
         # Знаменатель дроби в женском роде.
         # В случае если числитель > 1 множе ственное число + род. падеж.
         if numer % 10 == 1:
-            denom_word = StringOrdinal(denom).str_by_form('femn', 'nomn')
+            denom_word = StringOrdinal(denom).str_by_form("femn", "nomn")
         else:
-            denom_word = StringOrdinal(denom).str_by_form('femn', 'gent', False)
+            denom_word = StringOrdinal(denom).str_by_form("femn", "gent", False)
 
         return "{} {}".format(numer_words, denom_word)
 
@@ -500,18 +497,18 @@ class StringOrdinal(object):
         if position < 0 or position >= 1000:
             raise ValueError("Unsupported ordinal {}.".format(position))
         self.pos = position
-        self._string = self.str_by_form('male', 'nomn')
+        self._string = self.str_by_form("male", "nomn")
 
-    def str_by_form(self, gen='male', case='nomn', is_sing=True):
+    def str_by_form(self, gen="male", case="nomn", is_sing=True):
         l = self.pos % 100
         n = self.pos - l
-        words = [num2words(n, lang='ru')] if n > 0 else []
+        words = [num2words(n, lang="ru")] if n > 0 else []
         if l >= 20:
             nl = l % 10
-            words.append(num2words(l - nl, lang='ru'))
+            words.append(num2words(l - nl, lang="ru"))
             l = nl
         words.append(_get_ord_cases(l, gen, case, is_sing))
-        return ' '.join(words)
+        return " ".join(words)
 
     def __str__(self):
         return self._string

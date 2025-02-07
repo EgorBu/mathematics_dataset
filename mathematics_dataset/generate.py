@@ -38,7 +38,9 @@ flags.DEFINE_string("filter", "", "restrict to matching module names")
 flags.DEFINE_integer("per_train_module", 10, "Num of examples per train module")
 flags.DEFINE_integer("per_test_module", 10, "Num of examples per test module")
 flags.DEFINE_bool("show_dropped", False, "Whether to print dropped questions")
-flags.DEFINE_string("jsonl", None, "Path to save JSONL file where each line will be a sample")
+flags.DEFINE_string(
+    "jsonl", None, "Path to save JSONL file where each line will be a sample"
+)
 
 
 filtered_modules = collections.OrderedDict([])
@@ -75,7 +77,7 @@ def _filter_and_flatten(modules_):
 
     def has_no_filter(full_name):
         has_filter = []
-        for flag_filter in  FLAGS.filter.split():
+        for flag_filter in FLAGS.filter.split():
             has_filter.append(flag_filter in full_name)
         return not any(has_filter)
 
@@ -165,7 +167,7 @@ def main(unused_argv):
     )
 
     jsonl_path = FLAGS.jsonl
-    jsonl_file = open(jsonl_path, 'w', encoding='utf-8') if jsonl_path else None
+    jsonl_file = open(jsonl_path, "w", encoding="utf-8") if jsonl_path else None
 
     try:
         for regime, flat_modules in six.iteritems(filtered_modules):
@@ -186,9 +188,11 @@ def main(unused_argv):
                             "regime": regime,
                             "module_name": module_name,
                             "question": str(problem.question),
-                            "answer": str(problem.answer)
+                            "answer": str(problem.answer),
                         }
-                        jsonl_file.write(json.dumps(json_line, ensure_ascii=False) + '\n')
+                        jsonl_file.write(
+                            json.dumps(json_line, ensure_ascii=False) + "\n"
+                        )
                 if num_dropped > 0:
                     logging.warning("Dropped %d examples", num_dropped)
     finally:

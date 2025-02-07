@@ -35,9 +35,7 @@ from six.moves import range
 from six.moves import zip
 
 
-_LETTERS = (
-    'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
-)
+_LETTERS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 
 _MAX_FRAC_TRIVIAL_PROB = 0.1
 
@@ -54,7 +52,7 @@ _GERUNDS = {
 }
 
 
-def _sym_case(n, forms=('символ', 'символа', 'символов')):
+def _sym_case(n, forms=("символ", "символа", "символов")):
     if 10 <= n < 20:
         return forms[2]
 
@@ -132,7 +130,7 @@ def _word_series(words, conjunction="and"):
         return ""
     if len_words == 1:
         return words[0]
-    return ', '.join(words)
+    return ", ".join(words)
 
 
 def _level_set_event(values, length, verb):
@@ -228,7 +226,7 @@ def _swr_space(is_train, sample_range):
 
     random_variable.description = (
         str(display.StringNumber(num_sampled))
-        + ' '
+        + " "
         + _sym_case(num_sampled)
         + " выбираются без возврата из набора "
         + sample.bag_contents

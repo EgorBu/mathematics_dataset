@@ -264,14 +264,15 @@ def expand(value, sample_args, context=None):
     entropy -= math.log10(max_order - min_order + 1)
     expression_ = polynomials.sample_with_brackets(variable, order, entropy)
     expanded = sympy.expand(expression_)
-    template = ' '.join([
-        random.choice(["Сократи", "Упрости"]),
-        random.choice(["выражение"]),
-    ])
-    template = ' '.join([
-        random.choice([template, "Раскрой скобки в выражении"]),
-        "{expression}"
-    ])
+    template = " ".join(
+        [
+            random.choice(["Сократи", "Упрости"]),
+            random.choice(["выражение"]),
+        ]
+    )
+    template = " ".join(
+        [random.choice([template, "Раскрой скобки в выражении"]), "{expression}"]
+    )
     return example.Problem(
         question=example.question(context, template, expression=expression_),
         answer=expanded,
@@ -324,11 +325,7 @@ def collect(value, sample_args, context=None):
         act = random.choice(["Сократи", "Упрости", "Приведи к стандартному виду"])
         ent = random.choice(["полином", "многочлен"])
 
-        template = ' '.join([
-            act,
-            ent,
-            "{unsimplified}"
-        ])
+        template = " ".join([act, ent, "{unsimplified}"])
         return example.Problem(
             question=example.question(context, template, unsimplified=unsimplified),
             answer=simplified,
@@ -395,16 +392,18 @@ def simplify_power(value, sample_args, context=None):
 
     template = [random.choice(["Сократи ", "Упрости "])]
     template.append("{unsimplified}")
-    template.append(random.choice(
-        [
-            "предполагая, что {variable} положительное.",
-            "в предположении, что {variable} положительное.",
-            "предполагая {variable} больше нуля.",
-            "при {variable} больше нуля.",
-            "при положительном {variable}.",
-        ]
-    ))
-    template = ' '.join(template)
+    template.append(
+        random.choice(
+            [
+                "предполагая, что {variable} положительное.",
+                "в предположении, что {variable} положительное.",
+                "предполагая {variable} больше нуля.",
+                "при {variable} больше нуля.",
+                "при положительном {variable}.",
+            ]
+        )
+    )
+    template = " ".join(template)
     return example.Problem(
         example.question(
             context, template, unsimplified=unsimplified, variable=variable

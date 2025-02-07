@@ -53,7 +53,9 @@ def _make_modules(entropy):
 
     return {
         # Solving equations:
-        "polynomial_roots1": functools.partial(polynomial_roots, None, sample_args_pure),
+        "polynomial_roots1": functools.partial(
+            polynomial_roots, None, sample_args_pure
+        ),
         "polynomial_roots_composed2": functools.partial(
             polynomial_roots, None, sample_args_composed
         ),
@@ -393,7 +395,7 @@ def sequence_nth_term(min_entropy, max_entropy):
             "Каков {variable}-ый член последовательности {sequence}?",
             "Найдите {variable}-ый термин в последовательности {sequence}.",
             "Определите член последовательности {sequence}, который находится на позиции {variable}.",
-            "Что является {variable}-ым элементом в последовательности {sequence}?"
+            "Что является {variable}-ым элементом в последовательности {sequence}?",
         ]
     )
     answer = sequence.sympy

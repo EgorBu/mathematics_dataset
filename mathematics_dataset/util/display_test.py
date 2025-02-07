@@ -159,8 +159,8 @@ class StringNumberTest(absltest.TestCase):
         words = display.StringNumber(15_439_822)
         self.assertEqual(
             str(words),
-            "пятнадцать миллионов четыреста тридцать девять тысяч " +
-            "восемьсот двадцать два",
+            "пятнадцать миллионов четыреста тридцать девять тысяч "
+            + "восемьсот двадцать два",
         )
         self.assertEqual(sympy.sympify(words), 15439822)
 
@@ -186,30 +186,17 @@ class StringOrdinalTest(absltest.TestCase):
         ordinal = display.StringOrdinal(10)
         self.assertEqual(str(ordinal), "десятый")
         ordinal = display.StringOrdinal(12)
-        self.assertEqual(
-            ordinal.str_by_form('male', 'nomn', False),
-            "двенадцатые"
-        )
+        self.assertEqual(ordinal.str_by_form("male", "nomn", False), "двенадцатые")
         ordinal = display.StringOrdinal(11)
-        self.assertEqual(
-            ordinal.str_by_form('male', 'gent', False),
-            "одиннадцатых"
-        )
+        self.assertEqual(ordinal.str_by_form("male", "gent", False), "одиннадцатых")
         ordinal = display.StringOrdinal(18)
-        self.assertEqual(
-            ordinal.str_by_form('femn', 'gent', True),
-            "восемнадцатой"
-        )
+        self.assertEqual(ordinal.str_by_form("femn", "gent", True), "восемнадцатой")
         ordinal = display.StringOrdinal(122)
         self.assertEqual(
-            ordinal.str_by_form('femn', 'gent', False),
-            "сто двадцать вторых"
+            ordinal.str_by_form("femn", "gent", False), "сто двадцать вторых"
         )
         ordinal = display.StringOrdinal(21)
-        self.assertEqual(
-            ordinal.str_by_form('femn', 'nomn', False),
-            "двадцать первые"
-        )
+        self.assertEqual(ordinal.str_by_form("femn", "nomn", False), "двадцать первые")
         # TODO: кратные 10 числитильные
         # ordinal = display.StringOrdinal(20)
         # self.assertEqual(

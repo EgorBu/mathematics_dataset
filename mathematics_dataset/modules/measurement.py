@@ -114,17 +114,11 @@ VOLUME = {
 }
 
 
-DIMENSIONS = [
-    LENGTH,
-    TIME,
-    TIME_YEARLY,
-    MASS,
-    VOLUME
-]
+DIMENSIONS = [LENGTH, TIME, TIME_YEARLY, MASS, VOLUME]
 
 
 def set_form(root: str, number: str, case: str):
-    '''
+    """
     Set form for unit.
     - root in DIMENSIONS
     - number in ['plur', 'sing]
@@ -133,14 +127,12 @@ def set_form(root: str, number: str, case: str):
     set_form('метр', 'plur', 'gent') = 'метров'
     set_form('минута', 'sing', 'loct') = 'минуте'
     set_form('тонна', 'sing', 'accs') = 'тонну'
-    '''
+    """
     return UNIT_CASES[root][number][case]
 
 
-def base_form(root: str,
-              value: Union[Decimal, Rational, int],
-              case: str):
-    '''
+def base_form(root: str, value: Union[Decimal, Rational, int], case: str):
+    """
     Set form for base unit. Unit form depends on quantity.
     - root in DIMENSIONS
     - value = quantity of base unit to transform
@@ -149,7 +141,7 @@ def base_form(root: str,
     set_form('метр', 'plur', 'gent') = 'метров'
     set_form('минута', 'sing', 'loct') = 'минуте'
     set_form('тонна', 'sing', 'accs') = 'тонну'
-    '''
+    """
     res = None
     if isinstance(value, Decimal):
         value = value._value
@@ -160,16 +152,16 @@ def base_form(root: str,
             d = int(value) % 20
 
         if d == 1:
-            res = set_form(root, 'sing', case)
-        elif case in ['gent', 'datv', 'ablt', 'loct']:
-            res = set_form(root, 'plur', case)
+            res = set_form(root, "sing", case)
+        elif case in ["gent", "datv", "ablt", "loct"]:
+            res = set_form(root, "plur", case)
         else:
             if d in (2, 3, 4):
-                res = set_form(root, 'sing', 'gent')
+                res = set_form(root, "sing", "gent")
             else:
-                res = set_form(root, 'plur', 'gent')
+                res = set_form(root, "plur", "gent")
     else:
-        res = set_form(root, 'sing', 'gent')
+        res = set_form(root, "sing", "gent")
 
     return res
 
@@ -210,36 +202,36 @@ def _conversion_decimal(context, is_train, is_extrapolation):
     templates = [
         (
             "Сколько {target_name} содержат {base_value} {base_name}?",
-            ('plur', 'gent'),
-            'loct'
+            ("plur", "gent"),
+            "loct",
         ),
         (
             "Чему равно {base_value} {base_name} в {target_name}?",
-            ('plur', 'loct'),
-            'gent'
+            ("plur", "loct"),
+            "gent",
         ),
         (
             "Переведи {base_value} {base_name} в {target_name}.",
-            ('plur', 'accs'),
-            'gent'
+            ("plur", "accs"),
+            "gent",
         ),
     ]
     if base_unit.symbol is not None:
         templates += [
             (
                 "Сколько {target_name} содержится в {base_value}{base_symbol}?",
-                ('plur', 'gent'),
-                'loct'
+                ("plur", "gent"),
+                "loct",
             ),
             (
                 "Чему равно {base_value}{base_symbol} в {target_name}?",
-                ('plur', 'loct'),
-                'gent'
+                ("plur", "loct"),
+                "gent",
             ),
             (
                 "Переведи {base_value}{base_symbol} в {target_name}.",
-                ('plur', 'accs'),
-                'gent'
+                ("plur", "accs"),
+                "gent",
             ),
         ]
     template, form_target, case_base = random.choice(templates)
@@ -286,8 +278,8 @@ def _conversion_fraction(context, is_train):
 
     template, case = random.choice(
         [
-            ("Сколько {target_name} содержат {base_value} {base_name}?", 'gent'),
-            ("Чему равно {base_value} {base_name} в {target_name}?", 'loct'),
+            ("Сколько {target_name} содержат {base_value} {base_name}?", "gent"),
+            ("Чему равно {base_value} {base_name} в {target_name}?", "loct"),
         ]
     )
 
@@ -296,8 +288,8 @@ def _conversion_fraction(context, is_train):
     else:
         base_value_string = display.StringNumber(base_value)  # e.g., two thirds
 
-    base_name = base_form(base_unit.name, base_value, 'gent')
-    target_name = set_form(target_unit.name, 'plur', case)
+    base_name = base_form(base_unit.name, base_value, "gent")
+    target_name = set_form(target_unit.name, "plur", case)
 
     question = example.question(
         context,
@@ -355,14 +347,10 @@ def time(is_train):
                 "Сколько времени было за {duration} {unit} до {end}?",
             ]
         )
-        unit = base_form('минута', duration_minutes, 'accs')
+        unit = base_form("минута", duration_minutes, "accs")
         return example.Problem(
             question=example.question(
-                context,
-                template,
-                duration=duration_minutes,
-                end=end,
-                unit=unit
+                context, template, duration=duration_minutes, end=end, unit=unit
             ),
             answer=start,
         )
@@ -373,13 +361,10 @@ def time(is_train):
                 "Сколько времени будет через {duration} {unit} после {start}?",
             ]
         )
-        unit = base_form('минута', duration_minutes, 'accs')
+        unit = base_form("минута", duration_minutes, "accs")
         return example.Problem(
             question=example.question(
-                context, template,
-                duration=duration_minutes,
-                start=start,
-                unit=unit
+                context, template, duration=duration_minutes, start=start, unit=unit
             ),
             answer=end,
         )

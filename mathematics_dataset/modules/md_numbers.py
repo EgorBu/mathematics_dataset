@@ -186,12 +186,12 @@ def round_number(value, sample_args, context=None):
     if power > 0:
         # Rounding to a power of ten.
         power_names = [
-            'десятков',
-            'сотен',
-            'тысяч',
-            'десятков тысяч',
-            'сотен тысяч',
-            'миллионов',
+            "десятков",
+            "сотен",
+            "тысяч",
+            "десятков тысяч",
+            "сотен тысяч",
+            "миллионов",
         ]
         description = power_names[power - 1]
     elif power == 0 and random.choice([False, True]):
@@ -201,15 +201,13 @@ def round_number(value, sample_args, context=None):
         # Round to decimal places.
         dps = -power
         if dps == 1:
-            description = random.choice([
-                "{dps} знака после запятой",
-                "{dps} десятичного знака"
-            ])
+            description = random.choice(
+                ["{dps} знака после запятой", "{dps} десятичного знака"]
+            )
         else:
-            description = random.choice([
-                "{dps} знаков после запятой",
-                "{dps} десятичных знаков"
-            ])
+            description = random.choice(
+                ["{dps} знаков после запятой", "{dps} десятичных знаков"]
+            )
 
         description = description.format(dps=dps)
 
@@ -272,20 +270,24 @@ def is_prime(value, sample_args, context=None):
 
     if random.choice([False, True]) and integer != 1:
         answer = not is_prime_
-        template = random.choice([
-            "{integer} - составное?",
-            "{integer} - составное число?",
-            "Является ли {integer} составным?",
-            "Является ли {integer} составным числом?",
-        ])
+        template = random.choice(
+            [
+                "{integer} - составное?",
+                "{integer} - составное число?",
+                "Является ли {integer} составным?",
+                "Является ли {integer} составным числом?",
+            ]
+        )
     else:
         answer = is_prime_
-        template = random.choice([
-            "{integer} - простое?",
-            "{integer} - простое число?",
-            "Является ли {integer} простым?",
-            "Является ли {integer} простым числом?",
-        ])
+        template = random.choice(
+            [
+                "{integer} - простое?",
+                "{integer} - простое число?",
+                "Является ли {integer} простым?",
+                "Является ли {integer} простым числом?",
+            ]
+        )
 
     return example.Problem(
         question=example.question(
@@ -483,7 +485,7 @@ def gcd(value, sample_args, context=None):
 
     p, q = context.sample(sample_args, [p, q])
 
-    adjective = 'наибольший общий делитель'
+    adjective = "наибольший общий делитель"
 
     if is_question:
         template = random.choice(
