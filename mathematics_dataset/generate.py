@@ -73,13 +73,20 @@ def _filter_and_flatten(modules_):
     """Returns flattened dict, filtered according to FLAGS."""
     flat = collections.OrderedDict()
 
+    def has_no_filter(full_name):
+        has_filter = []
+        for flag_filter in  FLAGS.filter.split():
+            has_filter.append(flag_filter in full_name)
+        return not any(has_filter)
+
     def add(submodules, prefix=None):
         for key, module_or_function in six.iteritems(submodules):
             full_name = prefix + "__" + key if prefix is not None else key
+            # print(full_name)
             if isinstance(module_or_function, dict):
                 add(module_or_function, full_name)
             else:
-                if FLAGS.filter not in full_name:
+                if has_no_filter(full_name):
                     continue
                 flat[full_name] = module_or_function
 
@@ -90,7 +97,6 @@ def _filter_and_flatten(modules_):
     flat = collections.OrderedDict(
         [(key, flat[key]) for key in sorted(six.iterkeys(flat))]
     )
-
     return flat
 
 
